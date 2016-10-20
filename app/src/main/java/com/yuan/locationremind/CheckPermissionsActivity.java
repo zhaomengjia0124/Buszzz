@@ -14,6 +14,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
+import android.widget.Toast;
+
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,13 +38,35 @@ public class CheckPermissionsActivity extends AppCompatActivity implements Activ
      * 判断是否需要检测，防止不停的弹框
      */
     private boolean isNeedCheck = true;
+    PermissionListener mPermissionlistener;
 
     @Override
     protected void onResume() {
         super.onResume();
         if (isNeedCheck) {
-            checkPermissions(needPermissions);
+            mPermissionlistener = new PermissionListener() {
+                @Override
+                public void onPermissionGranted() {
+                    Toast.makeText(CheckPermissionsActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+                    isNeedCheck = false;
+                }
+
+                @Override
+                public void onPermissionDenied(ArrayList<String> deniedPermissions) {
+                    Toast.makeText(CheckPermissionsActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+                }
+            };
+//            checkPermissions(needPermissions);
+            checkPermissions();
         }
+    }
+
+    private void checkPermissions() {
+        new TedPermission(this)
+                .setPermissionListener(mPermissionlistener)
+                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                .setPermissions(needPermissions)
+                .check();
     }
 
     /**
