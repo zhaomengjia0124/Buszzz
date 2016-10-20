@@ -8,8 +8,8 @@
     <!--用于访问wifi网络信息，wifi信息会用于进行网络定位-->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <!--这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位-->
-    <!--<uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>-->
-    <!--<uses-permission android:name="android.permission.CHANGE_CONFIGURATION"/>-->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION"/>
 
     <!-- 请求网络 -->
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -32,7 +32,7 @@
     <!--&lt;!&ndash;用于读取手机当前的状态&ndash;&gt;-->
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <!--&lt;!&ndash; 更改设置 &ndash;&gt;-->
-    <!--<uses-permission android:name="android.permission.WRITE_SETTINGS"/>-->
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
 
     <uses-permission android:name="android.permission.VIBRATE"/>
 
@@ -60,7 +60,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LocationPointActivity"
+            android:name=".LocationAddActivity"
             android:screenOrientation="portrait"/>
 
         <activity

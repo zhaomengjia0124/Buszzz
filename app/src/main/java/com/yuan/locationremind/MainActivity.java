@@ -14,8 +14,6 @@ import android.os.SystemClock;
 import android.os.Vibrator;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +23,9 @@ import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationClientOption.AMapLocationMode;
 import com.amap.api.location.AMapLocationListener;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 
 /**
  * Created by Yuan on 19/10/2016:6:09 PM.
@@ -33,7 +34,10 @@ import com.amap.api.location.AMapLocationListener;
  */
 public class MainActivity extends CheckPermissionsActivity implements AMapLocationListener {
 
-    private TextView mLocationResultTv;
+    @BindView(R.id.resultTv)
+    TextView mLocationResultTv;
+
+    //http://restapi.amap.com/v3/geocode/geo?key=389880a06e3f893ea46036f030c94700&address=%E8%A5%BF%E5%9C%9F%E5%9F%8E
 
     private AMapLocationClient mLocationClient;
 
@@ -45,9 +49,8 @@ public class MainActivity extends CheckPermissionsActivity implements AMapLocati
 
     private Vibrator mVibrator;
 
-    private boolean bEnable;
-
     private Handler mHandler = new Handler() {
+        @Override
         public void dispatchMessage(Message msg) {
             switch (msg.what) {
                 //开始定位
@@ -75,19 +78,24 @@ public class MainActivity extends CheckPermissionsActivity implements AMapLocati
             }
         }
     };
-
+    /**
+     * 闹钟广播
+     */
     private BroadcastReceiver mAlarmReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals("LOCATION")) {
+            if (intent.getAction().equals("om.location.buszzz.alarm")) {
                 if (null != mLocationClient) {
                     mLocationClient.startLocation();
                 }
             }
         }
     };
-    //自定义广播接收器
-    private BroadcastReceiver mGeoFenceReceiver = new BroadcastReceiver() {
+
+    /**
+     * 围栏区域变化广播
+     */
+    private BroadcastReceiver mLocationReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Bundle bundle = intent.getExtras();
@@ -103,25 +111,22 @@ public class MainActivity extends CheckPermissionsActivity implements AMapLocati
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final Switch vibrateSwitch = (Switch) findViewById(R.id.vibrateSwitch);
-        vibrateSwitch.setChecked((Boolean) SharedPreferenceHelper.getData(MainActivity.this, "enable", false));
-        vibrateSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                bEnable = isChecked;
-                SharedPreferenceHelper.putData(MainActivity.this, "enable", bEnable);
-                handleLocation();
-            }
-        });
-        handleLocation();
+        ButterKnife.bind(this);
+        init();
+
     }
 
-    private void handleLocation() {
+    private void init() {
 
-        if (!bEnable) {
-            return;
-        }
+        initAlarm();
 
+        registerLocationReceiver();
+        registerAlarmReceiver();
+
+        initLocationClient();
+    }
+
+    private void initLocationClient() {
 
         String latitude = (String) SharedPreferenceHelper.getData(this, "latitude", "");
         String longitude = (String) SharedPreferenceHelper.getData(this, "longitude", "");
@@ -131,46 +136,49 @@ public class MainActivity extends CheckPermissionsActivity implements AMapLocati
             return;
         }
 
-        String GEOFENCE_BROADCAST_ACTION = "com.location.apis.geofencedemo.broadcast";
-        IntentFilter fliter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        fliter.addAction(GEOFENCE_BROADCAST_ACTION);
-        registerReceiver(mGeoFenceReceiver, fliter);
-        Intent intent = new Intent(GEOFENCE_BROADCAST_ACTION);
+
+        Intent intent = new Intent("com.location.buszzz.broadcast");
         PendingIntent mPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
-        mLocationResultTv = (TextView) findViewById(R.id.resultTv);
-
         mLocationClient = new AMapLocationClient(this.getApplicationContext());
-        mLocationOption = new AMapLocationClientOption();
-        // 设置定位模式为高精度模式
-        mLocationOption.setLocationMode(AMapLocationMode.Hight_Accuracy);
-        // 设置定位监听
+        mLocationClient.addGeoFenceAlert("fenceId", Double.valueOf(latitude), Double.valueOf(longitude), 100, -1, mPendingIntent);// 39.978578, 116.352245
         mLocationClient.setLocationListener(this);
+        initLocationOption();
+        mLocationClient.setLocationOption(mLocationOption);
 
-        // 39.978578, 116.352245
-        mLocationClient.addGeoFenceAlert("fenceId", Double.valueOf(latitude), Double.valueOf(longitude), 100, -1, mPendingIntent);
+        mLocationClient.startLocation();
+        mHandler.sendEmptyMessage(Utils.MSG_LOCATION_START);
+    }
 
-        // 创建Intent对象，action为LOCATION
+    private void initAlarm() {
         Intent alarmIntent = new Intent();
-        alarmIntent.setAction("LOCATION");
-
+        alarmIntent.setAction("com.location.buszzz.alarm");
         mAlarmPendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
         mAlarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
-        //动态注册一个广播
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("LOCATION");
-        registerReceiver(mAlarmReceiver, filter);
-
-        mLocationOption.setNeedAddress(true);
-        mLocationOption.setGpsFirst(false);
-        mLocationOption.setInterval(2000);
         int alarmInterval = 10;
-        mLocationClient.setLocationOption(mLocationOption);
-        mLocationClient.startLocation();
-        mHandler.sendEmptyMessage(Utils.MSG_LOCATION_START);
         if (null != mAlarmManager) {
             mAlarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 2 * 1000, alarmInterval * 1000, mAlarmPendingIntent);
         }
+    }
+
+    private void registerAlarmReceiver() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("com.location.buszzz.alarm");
+        registerReceiver(mAlarmReceiver, filter);
+    }
+
+    private void initLocationOption() {
+        mLocationOption = new AMapLocationClientOption();
+        mLocationOption.setLocationMode(AMapLocationMode.Hight_Accuracy);
+        mLocationOption.setNeedAddress(true);
+        mLocationOption.setGpsFirst(false);
+        mLocationOption.setInterval(2000);
+    }
+
+    private void registerLocationReceiver() {
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        filter.addAction("com.location.buszzz.broadcast");
+        registerReceiver(mLocationReceiver, filter);
     }
 
     public void onClick(View view) {
@@ -184,8 +192,8 @@ public class MainActivity extends CheckPermissionsActivity implements AMapLocati
             unregisterReceiver(mAlarmReceiver);
             mAlarmReceiver = null;
         }
-        if (null != mGeoFenceReceiver) {
-            unregisterReceiver(mGeoFenceReceiver);
+        if (null != mLocationReceiver) {
+            unregisterReceiver(mLocationReceiver);
         }
         if (null != mAlarmManager) {
             mAlarmManager.cancel(mAlarmPendingIntent);
@@ -227,7 +235,7 @@ public class MainActivity extends CheckPermissionsActivity implements AMapLocati
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 100) {
-            handleLocation();
+            init();
         }
     }
 

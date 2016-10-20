@@ -91,4 +91,6 @@
 	    12	缺少定位权限。	请在设备的设置中开启app的定位权限\n
 	</string>
 	<string name="location_list">地址列表</string>
+	<string name="add">添加</string>
+	<string name="add_location">添加位置</string>
 </resources>

@@ -3,29 +3,47 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     android:orientation="vertical"
-    android:padding="14dp">
+    >
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        />
 
     <EditText
         android:id="@+id/longitudeEt"
-        android:hint="设置经度"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="numberDecimal"/>
+        android:layout_marginTop="8dp"
+        android:hint="设置经度"
+        android:inputType="numberDecimal"
+        android:paddingEnd="14dp"
+        android:paddingLeft="14dp"
+        android:paddingStart="14dp"/>
 
     <EditText
         android:id="@+id/latitudeEt"
         android:layout_width="match_parent"
-        android:hint="设置纬度"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:inputType="numberDecimal"/>
+        android:hint="设置纬度"
+        android:inputType="numberDecimal"
+        android:paddingEnd="14dp"
+        android:paddingLeft="14dp"
+        android:paddingStart="14dp"/>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="20dp"
         android:onClick="onClick"
-        android:text="设置"/>
+        android:paddingLeft="14dp"
+        android:text="添加"/>
 
 </LinearLayout>
