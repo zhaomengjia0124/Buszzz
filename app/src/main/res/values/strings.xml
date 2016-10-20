@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">LocationRemind</string>
+    <string name="app_name">Buszzz</string>
     <string name="title_main">高德定位SDK功能展示</string>
     
     <string name="title_location">获取定位数据</string>
@@ -90,4 +90,5 @@
 	    11	定位时的基站信息错误。	请检查是否安装SIM卡，设备很有可能连入了伪基站网络\n
 	    12	缺少定位权限。	请在设备的设置中开启app的定位权限\n
 	</string>
+	<string name="location_list">地址列表</string>
 </resources>

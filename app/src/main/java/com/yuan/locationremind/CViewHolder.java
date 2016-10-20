@@ -11,15 +11,17 @@ import android.widget.TextView;
  */
 public class CViewHolder extends RecyclerView.ViewHolder{
 
-    private TextView addressTv;
+    TextView addressTv;
 
-    private TextView longitude;
+    TextView longitudeTv;
 
-    private TextView latitude;
+    TextView latitudeTv;
 
 
     public CViewHolder(View itemView) {
         super(itemView);
-
+        addressTv = (TextView) itemView.findViewById(R.id.item_address);
+        longitudeTv = (TextView) itemView.findViewById(R.id.longitudeEt);
+        latitudeTv = (TextView) itemView.findViewById(R.id.latitudeEt);
     }
 }

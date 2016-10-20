@@ -22,8 +22,8 @@ public class LocationListActivity extends AppCompatActivity{
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
+        setTitle(R.string.location_list);
         setContentView(R.layout.activity_location_list);
         ButterKnife.bind(this);
 

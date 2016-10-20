@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.yuan.locationremind.entity.LocationEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,7 +22,7 @@ public class LocationAdapter extends RecyclerView.Adapter<CViewHolder> {
 
     private Context mContext;
 
-    private List<LocationEntity> mDataList;
+    private List<LocationEntity> mDataList = new ArrayList<>();
 
     public LocationAdapter(Context context) {
         mContext = context;
@@ -40,7 +41,10 @@ public class LocationAdapter extends RecyclerView.Adapter<CViewHolder> {
 
     @Override
     public void onBindViewHolder(CViewHolder holder, int position) {
-
+        LocationEntity entity = mDataList.get(position);
+        holder.addressTv.setText(entity.getAddress());
+        holder.latitudeTv.setText(String.valueOf(entity.getLatitude()));
+        holder.longitudeTv.setText(String.valueOf(entity.getLongitude()));
     }
 
     @Override
