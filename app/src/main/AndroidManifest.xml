@@ -48,22 +48,24 @@
         <activity
             android:name=".LocationListActivity"
             android:screenOrientation="portrait">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".LocationAddActivity"
             android:screenOrientation="portrait"/>
-
         <activity
             android:name=".LocationSetActivity"
             android:screenOrientation="portrait"/>
 
         <service android:name="com.amap.api.location.APSService"/>
         <service android:name=".LocationService"/>
+
+        <activity android:name=".SearchActivity">
+        </activity>
     </application>
 
 </manifest>

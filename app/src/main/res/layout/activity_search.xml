@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_search"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.yuan.locationremind.SearchActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:subtitleTextColor="@android:color/white"
+        app:titleTextColor="@android:color/white"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:paddingLeft="14dp"
+        android:paddingRight="14dp">
+
+        <com.yuan.locationremind.ClearEditText
+            android:id="@+id/searchEt"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="24dp"
+            android:drawablePadding="8dp"
+            android:hint="@string/please_input_addr"
+            android:maxLength="24"
+            android:paddingLeft="8dp"
+
+            android:paddingRight="8dp"
+            android:singleLine="true"
+            android:textSize="16sp"
+            app:iconClear="@mipmap/ic_del"
+            />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>
