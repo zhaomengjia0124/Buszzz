@@ -1,6 +1,7 @@
 package com.yuan.locationremind;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -47,6 +48,13 @@ public class LocationAdapter extends RecyclerView.Adapter<CViewHolder> {
         holder.longitudeTv.setText(String.valueOf(entity.getLongitude()));
         holder.intervalTv.setText("");
         holder.radiosTv.setText("");
+
+        holder.setIb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mContext.startActivity(new Intent(mContext, LocationSetActivity.class));
+            }
+        });
     }
 
     @Override

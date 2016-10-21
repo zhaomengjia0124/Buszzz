@@ -2,6 +2,7 @@ package com.yuan.locationremind;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 /**
@@ -16,6 +17,7 @@ public class CViewHolder extends RecyclerView.ViewHolder{
     TextView latitudeTv;
     TextView radiosTv;
     TextView intervalTv;
+    ImageButton setIb;
 
     public CViewHolder(View itemView) {
         super(itemView);
@@ -24,5 +26,6 @@ public class CViewHolder extends RecyclerView.ViewHolder{
         latitudeTv = (TextView) itemView.findViewById(R.id.remindLatitudeTv);
         radiosTv = (TextView) itemView.findViewById(R.id.remindRadiusTv);
         intervalTv = (TextView) itemView.findViewById(R.id.remindRefreshIntervalTv);
+        setIb = (ImageButton) itemView.findViewById(R.id.remindSetIb);
     }
 }

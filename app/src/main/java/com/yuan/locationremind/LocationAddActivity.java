@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
 
 import butterknife.BindView;
@@ -40,15 +39,21 @@ public class LocationAddActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(1, 1, 1, "查询").setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.add(1, 1, 1, "查询").setIcon(R.mipmap.ic_search).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.add(2, 2, 1, "添加").setIcon(R.mipmap.ic_save).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         return super.onCreateOptionsMenu(menu);
     }
 
-    public void onClick(View view) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getGroupId()) {
+            case 1:
 
-        String la = mLatitudeEt.getText().toString();
-        String lo = mLongitudeEt.getText().toString();
-        setResult(RESULT_OK);
-        finish();
+                break;
+            case 2:
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
