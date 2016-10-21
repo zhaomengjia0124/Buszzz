@@ -1,5 +1,6 @@
 package com.yuan.locationremind;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -31,10 +32,13 @@ import butterknife.ButterKnife;
 
 public class LocationListActivity extends AppCompatActivity {
 
+    private static int REQUEST_CODE = 1;
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
-
     private LocationDao mLocationDao;
+
+    private LocationAdapter mAdapter;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,12 +52,11 @@ public class LocationListActivity extends AppCompatActivity {
         mLocationDao = new LocationDao(this);
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        LocationAdapter adapter = new LocationAdapter(this);
-        mRecyclerView.setAdapter(adapter);
+        mAdapter = new LocationAdapter(this);
+        mRecyclerView.setAdapter(mAdapter);
 
-        adapter.refresh(getDatas());
+        mAdapter.refresh(getDatas());
     }
-
 
 
     @Override
@@ -64,10 +67,9 @@ public class LocationListActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        startActivity(new Intent(LocationListActivity.this, LocationAddActivity.class));
+        startActivityForResult(new Intent(LocationListActivity.this, LocationAddActivity.class), REQUEST_CODE);
         return super.onOptionsItemSelected(item);
     }
-
 
 
     public List<LocationEntity> getDatas() {
@@ -101,10 +103,18 @@ public class LocationListActivity extends AppCompatActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onLocationChanged(LocationEntity event){
+    public void onLocationChanged(LocationEntity event) {
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            List<LocationEntity> list = mLocationDao.queryAll();
+            mAdapter.refresh(list);
+        }
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {

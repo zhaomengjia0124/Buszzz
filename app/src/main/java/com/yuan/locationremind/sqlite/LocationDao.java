@@ -41,7 +41,7 @@ public class LocationDao {
                     double longitude = cursor.getDouble(cursor.getColumnIndex("longitude"));
                     double latitude = cursor.getDouble(cursor.getColumnIndex("latitude"));
                     String address = cursor.getString(cursor.getColumnIndex("address"));
-                    String isSelect = cursor.getString(cursor.getColumnIndex("isSelect"));
+                    int selected = cursor.getInt(cursor.getColumnIndex("selected"));
                     float radius = cursor.getFloat(cursor.getColumnIndex("radius"));
                     int interval = cursor.getInt(cursor.getColumnIndex("interval"));
                     entity.setAddress(address);
@@ -49,7 +49,7 @@ public class LocationDao {
                     entity.setInterval(interval);
                     entity.setLatitude(latitude);
                     entity.setLongitude(longitude);
-                    entity.setIsSelected(isSelect);
+                    entity.setSelected(selected);
                     return entity;
 
                 }
@@ -77,7 +77,7 @@ public class LocationDao {
                 double longitude = cursor.getDouble(cursor.getColumnIndex("longitude"));
                 double latitude = cursor.getDouble(cursor.getColumnIndex("latitude"));
                 String address = cursor.getString(cursor.getColumnIndex("address"));
-                String isSelect = cursor.getString(cursor.getColumnIndex("isSelect"));
+                int selected = cursor.getInt(cursor.getColumnIndex("selected"));
                 float radius = cursor.getFloat(cursor.getColumnIndex("radius"));
                 int interval = cursor.getInt(cursor.getColumnIndex("interval"));
                 entity.setAddress(address);
@@ -85,7 +85,7 @@ public class LocationDao {
                 entity.setInterval(interval);
                 entity.setLatitude(latitude);
                 entity.setLongitude(longitude);
-                entity.setIsSelected(isSelect);
+                entity.setSelected(selected);
 
                 list.add(entity);
             }
@@ -128,7 +128,7 @@ public class LocationDao {
         cv.put("address", entity.getAddress());
         cv.put("latitude", entity.getLatitude());
         cv.put("longitude", entity.getLongitude());
-        cv.put("isSelected", entity.getIsSelected());
+        cv.put("selected", entity.getSelected());
         cv.put("radius", entity.getRadius());
         return cv;
     }
