@@ -37,7 +37,6 @@ public class CheckPermissionsActivity extends AppCompatActivity implements Activ
             mPermissionListener = new PermissionListener() {
                 @Override
                 public void onPermissionGranted() {
-                    Toast.makeText(CheckPermissionsActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
                     isNeedCheck = false;
                 }
 

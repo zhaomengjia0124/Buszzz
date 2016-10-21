@@ -123,7 +123,7 @@
                 android:gravity="center">
 
                 <Switch
-                    android:id="@+id/vibrateSwitch"
+                    android:id="@+id/switchLocation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     />

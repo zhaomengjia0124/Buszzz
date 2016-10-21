@@ -38,12 +38,14 @@ public class LocationDao {
                 cursor = database.query("address_status", null, "id=?", new String[]{id}, null, null, null, null);
                 if (cursor.moveToNext()) {
                     LocationEntity entity = new LocationEntity();
+                    int currentId = cursor.getInt(cursor.getColumnIndex("id"));
                     double longitude = cursor.getDouble(cursor.getColumnIndex("longitude"));
                     double latitude = cursor.getDouble(cursor.getColumnIndex("latitude"));
                     String address = cursor.getString(cursor.getColumnIndex("address"));
                     int selected = cursor.getInt(cursor.getColumnIndex("selected"));
                     float radius = cursor.getFloat(cursor.getColumnIndex("radius"));
                     int interval = cursor.getInt(cursor.getColumnIndex("interval"));
+                    entity.setId(currentId);
                     entity.setAddress(address);
                     entity.setRadius(radius);
                     entity.setInterval(interval);
@@ -74,12 +76,14 @@ public class LocationDao {
             cursor = database.query("address_status", null, null, null, null, null, null, null);
             while (cursor.moveToNext()) {
                 LocationEntity entity = new LocationEntity();
+                int id = cursor.getInt(cursor.getColumnIndex("id"));
                 double longitude = cursor.getDouble(cursor.getColumnIndex("longitude"));
                 double latitude = cursor.getDouble(cursor.getColumnIndex("latitude"));
                 String address = cursor.getString(cursor.getColumnIndex("address"));
                 int selected = cursor.getInt(cursor.getColumnIndex("selected"));
                 float radius = cursor.getFloat(cursor.getColumnIndex("radius"));
                 int interval = cursor.getInt(cursor.getColumnIndex("interval"));
+                entity.setId(id);
                 entity.setAddress(address);
                 entity.setRadius(radius);
                 entity.setInterval(interval);

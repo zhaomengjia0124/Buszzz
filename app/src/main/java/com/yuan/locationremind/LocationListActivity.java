@@ -4,12 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.yuan.locationremind.entity.LocationEntity;
 import com.yuan.locationremind.sqlite.LocationDao;
@@ -18,7 +18,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -30,14 +29,20 @@ import butterknife.ButterKnife;
  * Description:com.yuan.locationremind.LocationList
  */
 
-public class LocationListActivity extends AppCompatActivity {
+public class LocationListActivity extends CheckPermissionsActivity {
 
-    private static int REQUEST_CODE = 1;
+    public static int REQUEST_CODE = 1;
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
+
+    @BindView(R.id.resultInfoTv)
+    TextView mResultTv;
+
     private LocationDao mLocationDao;
 
     private LocationAdapter mAdapter;
+
+    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,16 +51,18 @@ public class LocationListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_location_list);
         ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
 
         mLocationDao = new LocationDao(this);
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new LocationAdapter(this);
         mRecyclerView.setAdapter(mAdapter);
-
-        mAdapter.refresh(getDatas());
+        List<LocationEntity> list = mLocationDao.queryAll();
+        mAdapter.refresh(list);
+        mResultTv.setText("没有定位");
     }
 
 
@@ -69,20 +76,6 @@ public class LocationListActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         startActivityForResult(new Intent(LocationListActivity.this, LocationAddActivity.class), REQUEST_CODE);
         return super.onOptionsItemSelected(item);
-    }
-
-
-    public List<LocationEntity> getDatas() {
-
-        List<LocationEntity> list = new ArrayList<>();
-        for (int i = 0; i < 6; i++) {
-            LocationEntity entity = new LocationEntity();
-            entity.setAddress("Address");
-            entity.setLatitude(191);
-            entity.setLongitude(78);
-            list.add(entity);
-        }
-        return list;
     }
 
     @Override
@@ -99,12 +92,19 @@ public class LocationListActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLocationHandle(boolean operation) {
-
+        if (operation) {
+            mToolbar.setSubtitle(R.string.location_start);
+        } else {
+            mToolbar.setSubtitle(R.string.location_stop);
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLocationChanged(LocationEntity event) {
-
+        StringBuilder sb = new StringBuilder();
+        sb.append("经度：").append(event.getLongitude()).append("  ");
+        sb.append("纬度：").append(event.getLatitude());
+        mResultTv.setText(sb);
     }
 
     @Override
@@ -118,7 +118,14 @@ public class LocationListActivity extends AppCompatActivity {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        SharedPreferenceHelper.putData(LocationListActivity.this, "enable", false);
+        LocationDao dao = new LocationDao(this);
+
+        for (LocationEntity entity : dao.queryAll()) {
+            if(entity.getSelected() == 1) {
+                entity.setSelected(0);
+                mLocationDao.update(entity);
+            }
+        }
         super.onSaveInstanceState(outState);
     }
 }

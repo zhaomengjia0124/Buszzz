@@ -12,13 +12,13 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.os.Vibrator;
-import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.yuan.locationremind.entity.LocationEntity;
+import com.yuan.locationremind.sqlite.LocationDao;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -34,6 +34,14 @@ public class LocationService extends Service implements AMapLocationListener {
     private Vibrator mVibrator;
 
     private AMapLocationClient mLocationClient;
+
+    private int mInterval;
+
+    private float mRadius;
+
+    private LocationEntity mLoactionEntity;
+
+    private PendingIntent mPendingIntent;
     /**
      * 闹钟广播
      */
@@ -56,7 +64,7 @@ public class LocationService extends Service implements AMapLocationListener {
             Bundle bundle = intent.getExtras();
             int status = bundle.getInt("event");
             if (status == 1) {
-//                vibrate();
+                vibrate();
             }
         }
     };
@@ -64,18 +72,42 @@ public class LocationService extends Service implements AMapLocationListener {
     @Override
     public void onCreate() {
         super.onCreate();
+
         initAlarm();
 
         registerAlarmReceiver();
         registerLocationReceiver();
 
-        initLocationOption();
-        initLocationClient();
-
+        mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        if (intent == null) {
+            return super.onStartCommand(intent, flags, startId);
+        }
+
+        mLoactionEntity = (LocationEntity) intent.getSerializableExtra("entity");
+
+        if (mPendingIntent != null && mLocationClient != null) {
+            mLocationClient.removeGeoFenceAlert(mPendingIntent);
+        }else{
+            initLocationOption();
+            initLocationClient();
+        }
+
+        if (mLoactionEntity != null) {
+            mInterval = mLoactionEntity.getInterval();
+            mRadius = mLoactionEntity.getRadius();
+            mLocationClient.addGeoFenceAlert("fenceId", mLoactionEntity.getLatitude(), mLoactionEntity.getLongitude(), mInterval, -1, mPendingIntent);// 39.978578, 116.352245
+            mLocationOption.setInterval(mInterval);
+            mLocationClient.setLocationOption(mLocationOption);
+
+            mLocationClient.startLocation();
+            EventBus.getDefault().post(true);
+        }
+
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -106,24 +138,13 @@ public class LocationService extends Service implements AMapLocationListener {
 
     private void initLocationClient() {
 
-        String latitude = (String) SharedPreferenceHelper.getData(this, "latitude", "0");
-        String longitude = (String) SharedPreferenceHelper.getData(this, "longitude", "0");
-
-//        if (TextUtils.isEmpty(latitude) || TextUtils.isEmpty(longitude)) {
-//            Toast.makeText(this, "请设置经纬度！", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
-
         Intent intent = new Intent("com.location.buszzz.broadcast");
-        PendingIntent mPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
+        mPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
         mLocationClient = new AMapLocationClient(this.getApplicationContext());
-        mLocationClient.addGeoFenceAlert("fenceId", Double.valueOf(latitude), Double.valueOf(longitude), 100, -1, mPendingIntent);// 39.978578, 116.352245
         mLocationClient.setLocationListener(this);
         initLocationOption();
         mLocationClient.setLocationOption(mLocationOption);
 
-        mLocationClient.startLocation();
-        EventBus.getDefault().post(true);
     }
 
     private void registerAlarmReceiver() {
@@ -139,7 +160,6 @@ public class LocationService extends Service implements AMapLocationListener {
     }
 
     private void vibrate() {
-        mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         long[] pattern = {100, 200, 100, 200, 100, 300, 100, 400, 100, 500, 100, 600};
         mVibrator.vibrate(pattern, pattern.length / 2);
     }
@@ -148,9 +168,6 @@ public class LocationService extends Service implements AMapLocationListener {
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
         if (null != aMapLocation) {
-
-            Log.d("LocationService", aMapLocation.getAddress());
-
             LocationEntity entity = new LocationEntity();
             entity.setAddress(aMapLocation.getAddress());
             entity.setLatitude(aMapLocation.getLatitude());
@@ -158,4 +175,35 @@ public class LocationService extends Service implements AMapLocationListener {
             EventBus.getDefault().post(entity);
         }
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if (mAlarmReceiver != null) {
+            unregisterReceiver(mAlarmReceiver);
+        }
+
+        if (mLocationReceiver != null) {
+            unregisterReceiver(mLocationReceiver);
+        }
+
+        if (mVibrator != null) {
+            mVibrator.cancel();
+        }
+
+        if (mLocationClient != null) {
+            mLocationClient.onDestroy();
+        }
+
+        if (mLoactionEntity != null) {
+            LocationDao dao = new LocationDao(this);
+            mLoactionEntity.setSelected(0);
+            dao.update(mLoactionEntity);
+        }
+
+
+
+    }
+
 }
