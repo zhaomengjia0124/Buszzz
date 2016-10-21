@@ -58,8 +58,7 @@ public class LocationAddActivity extends AppCompatActivity {
 
                 break;
             case 2:
-
-                finish();
+                saveLocation();
                 break;
         }
         return super.onOptionsItemSelected(item);
