@@ -3,11 +3,11 @@
           package="com.yuan.locationremind">
 
     <!-- Normal Permissions 不需要运行时注册 -->
-    <!--获取运营商信息，用于支持提供运营商信息相关的接口-->
+    <!-- 获取运营商信息，用于支持提供运营商信息相关的接口 -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <!--用于访问wifi网络信息，wifi信息会用于进行网络定位-->
+    <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位 -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <!--这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位-->
+    <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
     <uses-permission android:name="android.permission.CHANGE_CONFIGURATION"/>
 
@@ -17,23 +17,21 @@
     <!-- 不是SDK需要的权限，是示例中的后台唤醒定位需要的权限 -->
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
-
     <!-- 需要运行时注册的权限 -->
-    <!--用于进行网络定位-->
+    <!-- 用于进行网络定位 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <!--用于访问GPS定位-->
+    <!-- 用于访问GPS定位 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
-    <!--&lt;!&ndash;写入扩展存储，向扩展卡写入数据，用于写入缓存定位数据&ndash;&gt;-->
+    <!-- &lt;!&ndash;写入扩展存储，向扩展卡写入数据，用于写入缓存定位数据&ndash;&gt; -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <!--&lt;!&ndash;读取缓存数据&ndash;&gt;-->
+    <!-- &lt;!&ndash;读取缓存数据&ndash;&gt; -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
-    <!--&lt;!&ndash;用于读取手机当前的状态&ndash;&gt;-->
+    <!-- &lt;!&ndash;用于读取手机当前的状态&ndash;&gt; -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <!--&lt;!&ndash; 更改设置 &ndash;&gt;-->
+    <!-- &lt;!&ndash; 更改设置 &ndash;&gt; -->
     <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
-
     <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
@@ -46,13 +44,11 @@
             android:name="com.amap.api.v2.apikey"
             android:value="1810efd105d91c9e46c3e34b06aecd5a"/>
         <!-- 定位需要的服务 -->
-        <service android:name="com.amap.api.location.APSService">
-        </service>
+        <service android:name="com.amap.api.location.APSService"/>
 
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait"
-            >
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -62,10 +58,15 @@
         <activity
             android:name=".LocationAddActivity"
             android:screenOrientation="portrait"/>
-
         <activity
             android:name=".LocationListActivity"
             android:screenOrientation="portrait"/>
+
+        <service
+            android:name=".LocationService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
     </application>
 
 </manifest>

@@ -47,4 +47,5 @@ dependencies {
     apt 'com.jakewharton:butterknife-compiler:8.0.1'
     compile 'com.jakewharton:butterknife:8.0.1'
     compile 'gun0912.ted:tedpermission:1.0.0'
+    compile 'org.greenrobot:eventbus:3.0.0'
 }

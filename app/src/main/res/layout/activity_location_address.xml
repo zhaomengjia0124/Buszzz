@@ -18,23 +18,22 @@
         android:id="@+id/longitudeEt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginLeft="14dp"
+        android:layout_marginRight="14dp"
+        android:layout_marginTop="16dp"
         android:hint="设置经度"
         android:inputType="numberDecimal"
-        android:paddingEnd="14dp"
-        android:paddingLeft="14dp"
-        android:paddingStart="14dp"/>
+        />
 
     <EditText
         android:id="@+id/latitudeEt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="14dp"
+        android:layout_marginRight="14dp"
         android:layout_marginTop="8dp"
         android:hint="设置纬度"
-        android:inputType="numberDecimal"
-        android:paddingEnd="14dp"
-        android:paddingLeft="14dp"
-        android:paddingStart="14dp"/>
+        android:inputType="numberDecimal"/>
 
     <Button
         android:layout_width="match_parent"

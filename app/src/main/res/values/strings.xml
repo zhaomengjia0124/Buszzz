@@ -93,4 +93,12 @@
 	<string name="location_list">地址列表</string>
 	<string name="add">添加</string>
 	<string name="add_location">添加位置</string>
+	<string name="location_start">正在定位...</string>
+	<string name="location_stop">停止定位</string>
+	<string name="address">地址：</string>
+	<string name="longitude">经度：</string>
+	<string name="latitude">纬度：</string>
+	<string name="refresh_interval">刷新间隔：</string>
+	<string name="remind_radius">范围：</string>
+	<string name="switchs">是否开启</string>
 </resources>
