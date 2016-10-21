@@ -25,6 +25,7 @@ class SQLiteHelper extends SQLiteOpenHelper {
                 + "longitude DOUBLE,"
                 + "latitude DOUBLE,"
                 + "address TEXT,"
+                + "isSelected TEXT,"
                 + ");";
         sqLiteDatabase.execSQL(createSql);
     }

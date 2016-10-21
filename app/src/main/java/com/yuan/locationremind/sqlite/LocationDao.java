@@ -42,10 +42,12 @@ public class LocationDao {
                     double longitude = cursor.getDouble(cursor.getColumnIndex("longitude"));
                     double latitude = cursor.getDouble(cursor.getColumnIndex("latitude"));
                     String address = cursor.getString(cursor.getColumnIndex("address"));
+                    String isSelect = cursor.getString(cursor.getColumnIndex("isSelect"));
                     entity.setAddress(address);
                     entity.setAddressId(addressId);
                     entity.setLatitude(latitude);
                     entity.setLongitude(longitude);
+                    entity.setIsSelected(isSelect);
                     return entity;
 
                 }
@@ -74,11 +76,12 @@ public class LocationDao {
                 double longitude = cursor.getDouble(cursor.getColumnIndex("longitude"));
                 double latitude = cursor.getDouble(cursor.getColumnIndex("latitude"));
                 String address = cursor.getString(cursor.getColumnIndex("address"));
-
+                String isSelect = cursor.getString(cursor.getColumnIndex("isSelect"));
                 entity.setAddress(address);
                 entity.setAddressId(addressId);
                 entity.setLatitude(latitude);
                 entity.setLongitude(longitude);
+                entity.setIsSelected(isSelect);
 
                 list.add(entity);
             }
@@ -121,6 +124,7 @@ public class LocationDao {
         cv.put("address", entity.getAddress());
         cv.put("latitude", entity.getLatitude());
         cv.put("longitude", entity.getLongitude());
+        cv.put("isSelected", entity.getIsSelected());
         return cv;
     }
 

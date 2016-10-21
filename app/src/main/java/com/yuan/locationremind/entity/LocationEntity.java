@@ -13,6 +13,8 @@ public class LocationEntity implements Serializable {
     private String address;
     private double latitude;
     private double longitude;
+    private String addressId;
+    private String isSelected;//是否使用中
 
     public String getAddress() {
         return address;
@@ -46,12 +48,22 @@ public class LocationEntity implements Serializable {
         this.addressId = addressId;
     }
 
+    public String getIsSelected() {
+        return isSelected;
+    }
+
+    public void setIsSelected(String isSelected) {
+        this.isSelected = isSelected;
+    }
+
     @Override
     public String toString() {
         return "LocationEntity{" +
                 "address='" + address + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
+                ", addressId='" + addressId + '\'' +
+                ", isSelected='" + isSelected + '\'' +
                 '}';
     }
 }
