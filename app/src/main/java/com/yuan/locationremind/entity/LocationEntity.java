@@ -38,6 +38,14 @@ public class LocationEntity implements Serializable {
         this.longitude = longitude;
     }
 
+    public String getAddressId() {
+        return addressId;
+    }
+
+    public void setAddressId(String addressId) {
+        this.addressId = addressId;
+    }
+
     @Override
     public String toString() {
         return "LocationEntity{" +
