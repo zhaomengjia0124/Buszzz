@@ -8,12 +8,20 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.textservice.SuggestionsInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amap.api.services.help.Inputtips;
+import com.amap.api.services.help.InputtipsQuery;
+import com.amap.api.services.help.Tip;
 import com.yuan.locationremind.entity.LocationEntity;
+import com.yuan.locationremind.searchBar.MaterialSearchBar;
 import com.yuan.locationremind.sqlite.LocationDao;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,7 +32,7 @@ import butterknife.ButterKnife;
  * Description:com.yuan.locationremind.LocationPointActivity
  */
 
-public class LocationAddActivity extends AppCompatActivity {
+public class LocationAddActivity extends AppCompatActivity implements MaterialSearchBar.OnSearchActionListener, Inputtips.InputtipsListener {
 
     @BindView(R.id.latitudeEt)
     EditText mLatitudeEt;
@@ -32,37 +40,19 @@ public class LocationAddActivity extends AppCompatActivity {
     @BindView(R.id.longitudeEt)
     EditText mLongitudeEt;
 
+    @BindView(R.id.searchBar)
+    MaterialSearchBar searchBar;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_address);
         ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.add_location);
-        setSupportActionBar(toolbar);
-
+        searchBar.setOnSearchActionListener(this);
+        searchBar.setText("111");
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(1, 1, 1, "查询").setIcon(R.mipmap.ic_search).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        menu.add(2, 2, 1, "添加").setIcon(R.mipmap.ic_save).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getGroupId()) {
-            case 1:
-
-                break;
-            case 2:
-                saveLocation();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     private void saveLocation() {
         String latitude = mLatitudeEt.getText().toString();
@@ -85,9 +75,46 @@ public class LocationAddActivity extends AppCompatActivity {
         entity.setLatitude(la);
         entity.setLongitude(lo);
 
-        LocationDao dao=new LocationDao(this);
+        LocationDao dao = new LocationDao(this);
         dao.insert(entity);
         setResult(RESULT_OK);
         finish();
+    }
+
+    @Override
+    public void onSearchStateChanged(boolean enabled) {
+        Toast.makeText(this, "StateChanged", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onSearchConfirmed(CharSequence text) {
+
+    }
+
+    @Override
+    public void onButtonClicked(int buttonCode) {
+        Toast.makeText(this, "ButtonClicked", Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override
+    public void onTextChange(CharSequence text) {
+        InputtipsQuery inputQuery = new InputtipsQuery(text.toString(), "");
+        inputQuery.setCityLimit(true);
+
+
+        Inputtips inputTips = new Inputtips(this, inputQuery);
+        inputTips.setInputtipsListener(this);
+
+        inputTips.requestInputtipsAsyn();
+    }
+
+    @Override
+    public void onGetInputtips(List<Tip> list, int i) {
+        List<String> addressList = new ArrayList<>();
+        for (Tip tip : list) {
+            addressList.add(tip.getName());
+        }
+        searchBar.setLastSuggestions(addressList);
     }
 }

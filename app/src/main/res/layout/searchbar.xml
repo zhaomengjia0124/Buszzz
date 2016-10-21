@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:id="@+id/inputContainer"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        >
+
+        <ImageView
+            android:id="@+id/mt_arrow"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:padding="13dp"
+            android:src="@drawable/ic_arrow_left_black_48dp"
+            android:tint="@color/material_grey_600"
+            android:visibility="visible"/>
+
+        <EditText
+            android:id="@+id/mt_editText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:hint="@string/action_search"
+            android:imeOptions="flagNoExtractUi|actionSearch"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:visibility="visible"/>
+
+        <ImageView
+            android:id="@+id/mt_clear"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="?attr/selectableItemBackground"
+            android:padding="14dp"
+            android:src="@drawable/ic_close_black_48dp"
+            android:tint="@color/material_grey_600"/>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/last"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="50dp">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/material_grey_300"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/mt_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/mt_search"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:clickable="false"
+        android:padding="13dp"
+        android:src="@drawable/ic_magnify_black_48dp"
+        android:tint="@color/material_grey_600"
+        android:visibility="visible"/>
+
+</RelativeLayout>
+
