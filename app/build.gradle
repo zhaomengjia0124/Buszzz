@@ -15,15 +15,15 @@ android {
     signingConfigs {
         debug {
 
-//            def password = "shtd@beijing"
-////            def console = System.console()
-////            if (console != null) {
-////                password = String.valueOf(console.readPassword("Enter keystore password: "))
-////            }
-//            storeFile file("/Users/Shared/sign/shtdAndroidSign")
-//            storePassword password
-//            keyAlias "shtd"
-//            keyPassword password
+            def password = "shtd@beijing"
+//            def console = System.console()
+//            if (console != null) {
+//                password = String.valueOf(console.readPassword("Enter keystore password: "))
+//            }
+            storeFile file("/Users/Shared/sign/shtdAndroidSign")
+            storePassword password
+            keyAlias "shtd"
+            keyPassword password
         }
     }
     buildTypes {

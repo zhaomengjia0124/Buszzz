@@ -13,7 +13,7 @@ public class LocationEntity implements Serializable {
     private String address;
     private double latitude;
     private double longitude;
-    private String isSelected;//是否使用中
+    private int selected;//是否使用中
     private float radius;//半径
     private int interval;//刷新间隔
 
@@ -65,23 +65,26 @@ public class LocationEntity implements Serializable {
         this.interval = interval;
     }
 
-    public String getIsSelected() {
-        return isSelected;
+
+    public int getSelected() {
+        return selected;
     }
 
-    public void setIsSelected(String isSelected) {
-        this.isSelected = isSelected;
+    public void setSelected(int selected) {
+        this.selected = selected;
     }
 
     @Override
     public String toString() {
         return "LocationEntity{" +
-                "address='" + address + '\'' +
+                "id=" + id +
+                ", address='" + address + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
-                ", isSelected='" + isSelected + '\'' +
+                ", selected=" + selected +
                 ", radius=" + radius +
                 ", interval=" + interval +
                 '}';
     }
 }
+
