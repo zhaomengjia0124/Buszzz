@@ -21,7 +21,8 @@ class SQLiteHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String createSql = "CREATE TABLE if not exists " + "address_status" + " ("
                 + "id INTEGER PRIMARY KEY autoincrement,"
-                + "addressId TEXT,"
+                + "radius FLOAT,"
+                + "interval INT,"
                 + "longitude DOUBLE,"
                 + "latitude DOUBLE,"
                 + "address TEXT,"

@@ -35,16 +35,18 @@ public class LocationDao {
             SQLiteDatabase database = mHelper.getReadableDatabase();
             Cursor cursor = null;
             try {
-                cursor = database.query("address_status", null, "addressId=?", new String[]{id}, null, null, null, null);
+                cursor = database.query("address_status", null, "id=?", new String[]{id}, null, null, null, null);
                 if (cursor.moveToNext()) {
                     LocationEntity entity = new LocationEntity();
-                    String addressId = cursor.getString(cursor.getColumnIndex("addressId"));
                     double longitude = cursor.getDouble(cursor.getColumnIndex("longitude"));
                     double latitude = cursor.getDouble(cursor.getColumnIndex("latitude"));
                     String address = cursor.getString(cursor.getColumnIndex("address"));
                     String isSelect = cursor.getString(cursor.getColumnIndex("isSelect"));
+                    float radius = cursor.getFloat(cursor.getColumnIndex("radius"));
+                    int interval = cursor.getInt(cursor.getColumnIndex("interval"));
                     entity.setAddress(address);
-                    entity.setAddressId(addressId);
+                    entity.setRadius(radius);
+                    entity.setInterval(interval);
                     entity.setLatitude(latitude);
                     entity.setLongitude(longitude);
                     entity.setIsSelected(isSelect);
@@ -72,13 +74,15 @@ public class LocationDao {
             cursor = database.query("address_status", null, null, null, null, null, null, null);
             while (cursor.moveToNext()) {
                 LocationEntity entity = new LocationEntity();
-                String addressId = cursor.getString(cursor.getColumnIndex("addressId"));
                 double longitude = cursor.getDouble(cursor.getColumnIndex("longitude"));
                 double latitude = cursor.getDouble(cursor.getColumnIndex("latitude"));
                 String address = cursor.getString(cursor.getColumnIndex("address"));
                 String isSelect = cursor.getString(cursor.getColumnIndex("isSelect"));
+                float radius = cursor.getFloat(cursor.getColumnIndex("radius"));
+                int interval = cursor.getInt(cursor.getColumnIndex("interval"));
                 entity.setAddress(address);
-                entity.setAddressId(addressId);
+                entity.setRadius(radius);
+                entity.setInterval(interval);
                 entity.setLatitude(latitude);
                 entity.setLongitude(longitude);
                 entity.setIsSelected(isSelect);
@@ -98,7 +102,7 @@ public class LocationDao {
 
     public boolean update(LocationEntity entity) {
         SQLiteDatabase database = mHelper.getWritableDatabase();
-        long update = database.update("address_status", getContentValues(entity), "addressId=?", new String[]{entity.getAddressId()});
+        long update = database.update("address_status", getContentValues(entity), "id=?", new String[]{String.valueOf(entity.getId())});
         database.close();
         return update != -1;
     }
@@ -106,7 +110,7 @@ public class LocationDao {
     public boolean delete(LocationEntity entity) {
         if (entity == null) return false;
         SQLiteDatabase database = mHelper.getWritableDatabase();
-        long delete = database.delete("address_status", "addressId=?", new String[]{entity.getAddressId()});
+        long delete = database.delete("address_status", "id=?", new String[]{String.valueOf(entity.getId())});
         database.close();
         return delete != -1;
     }
@@ -120,11 +124,12 @@ public class LocationDao {
 
     private ContentValues getContentValues(LocationEntity entity) {
         ContentValues cv = new ContentValues();
-        cv.put("addressId", entity.getAddressId());
+        cv.put("interval", entity.getInterval());
         cv.put("address", entity.getAddress());
         cv.put("latitude", entity.getLatitude());
         cv.put("longitude", entity.getLongitude());
         cv.put("isSelected", entity.getIsSelected());
+        cv.put("radius", entity.getRadius());
         return cv;
     }
 
