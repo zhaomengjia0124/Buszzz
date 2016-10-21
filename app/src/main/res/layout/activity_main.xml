@@ -43,7 +43,7 @@
                     android:text="@string/address"/>
 
                 <TextView
-                    android:id="@+id/remind_address"
+                    android:id="@+id/remindAddressTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
@@ -123,15 +123,4 @@
             android:text="@string/switchs"/>
     </LinearLayout>
 
-    <ScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/locationResultTv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="14dp"
-            android:paddingRight="14dp"/>
-    </ScrollView>
 </LinearLayout>

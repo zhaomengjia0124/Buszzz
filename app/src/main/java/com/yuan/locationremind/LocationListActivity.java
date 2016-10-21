@@ -11,6 +11,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.yuan.locationremind.entity.LocationEntity;
+import com.yuan.locationremind.sqlite.LocationDao;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +34,7 @@ public class LocationListActivity extends AppCompatActivity {
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
 
+    private LocationDao mLocationDao;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,12 +45,16 @@ public class LocationListActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        mLocationDao = new LocationDao(this);
+
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         LocationAdapter adapter = new LocationAdapter(this);
         mRecyclerView.setAdapter(adapter);
 
         adapter.refresh(getDatas());
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -58,6 +68,8 @@ public class LocationListActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+
     public List<LocationEntity> getDatas() {
 
         List<LocationEntity> list = new ArrayList<>();
@@ -69,5 +81,34 @@ public class LocationListActivity extends AppCompatActivity {
             list.add(entity);
         }
         return list;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLocationHandle(boolean operation) {
+
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLocationChanged(LocationEntity event){
+
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        SharedPreferenceHelper.putData(LocationListActivity.this, "enable", false);
+        super.onSaveInstanceState(outState);
     }
 }

@@ -45,6 +45,8 @@ public class LocationAdapter extends RecyclerView.Adapter<CViewHolder> {
         holder.addressTv.setText(entity.getAddress());
         holder.latitudeTv.setText(String.valueOf(entity.getLatitude()));
         holder.longitudeTv.setText(String.valueOf(entity.getLongitude()));
+        holder.intervalTv.setText("");
+        holder.radiosTv.setText("");
     }
 
     @Override

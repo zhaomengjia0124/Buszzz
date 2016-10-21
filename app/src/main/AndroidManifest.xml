@@ -44,29 +44,22 @@
             android:name="com.amap.api.v2.apikey"
             android:value="1810efd105d91c9e46c3e34b06aecd5a"/>
         <!-- 定位需要的服务 -->
-        <service android:name="com.amap.api.location.APSService"/>
 
         <activity
-            android:name=".MainActivity"
+            android:name=".LocationListActivity"
             android:screenOrientation="portrait">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".LocationAddActivity"
             android:screenOrientation="portrait"/>
-        <activity
-            android:name=".LocationListActivity"
-            android:screenOrientation="portrait"/>
 
-        <service
-            android:name=".LocationService"
-            android:enabled="true"
-            android:exported="true">
-        </service>
+        <service android:name="com.amap.api.location.APSService"/>
+        <service android:name=".LocationService"/>
     </application>
 
 </manifest>

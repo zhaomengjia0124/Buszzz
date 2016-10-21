@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.os.Vibrator;
+import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -64,10 +65,13 @@ public class LocationService extends Service implements AMapLocationListener {
     public void onCreate() {
         super.onCreate();
         initAlarm();
-        initLocationOption();
-        initLocationClient();
+
         registerAlarmReceiver();
         registerLocationReceiver();
+
+        initLocationOption();
+        initLocationClient();
+
     }
 
     @Override
@@ -144,6 +148,9 @@ public class LocationService extends Service implements AMapLocationListener {
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
         if (null != aMapLocation) {
+
+            Log.d("LocationService", aMapLocation.getAddress());
+
             LocationEntity entity = new LocationEntity();
             entity.setAddress(aMapLocation.getAddress());
             entity.setLatitude(aMapLocation.getLatitude());

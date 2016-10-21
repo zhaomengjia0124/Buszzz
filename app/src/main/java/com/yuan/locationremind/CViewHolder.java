@@ -14,11 +14,15 @@ public class CViewHolder extends RecyclerView.ViewHolder{
     TextView addressTv;
     TextView longitudeTv;
     TextView latitudeTv;
+    TextView radiosTv;
+    TextView intervalTv;
 
     public CViewHolder(View itemView) {
         super(itemView);
-        addressTv = (TextView) itemView.findViewById(R.id.item_address);
-        longitudeTv = (TextView) itemView.findViewById(R.id.item_longitude);
-        latitudeTv = (TextView) itemView.findViewById(R.id.item_latitude);
+        addressTv = (TextView) itemView.findViewById(R.id.remindAddressTv);
+        longitudeTv = (TextView) itemView.findViewById(R.id.remindLongitudeTv);
+        latitudeTv = (TextView) itemView.findViewById(R.id.remindLatitudeTv);
+        radiosTv = (TextView) itemView.findViewById(R.id.remindRadiusTv);
+        intervalTv = (TextView) itemView.findViewById(R.id.remindRefreshIntervalTv);
     }
 }
