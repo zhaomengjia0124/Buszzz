@@ -236,7 +236,7 @@ public class LocationService extends Service implements AMapLocationListener {
         params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;// 系统提示window
         params.format = PixelFormat.TRANSLUCENT;// 支持透明
         //params.format = PixelFormat.RGBA_8888;
-        params.flags |= WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;// 焦点
+//        params.flags |= WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;// 焦点
         params.width = 600;//窗口的宽和高
         params.height = 200;
         params.gravity = Gravity.CENTER;

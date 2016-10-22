@@ -61,9 +61,6 @@ public class LocationListActivity extends CheckPermissionsActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new LocationAdapter(this);
         mRecyclerView.setAdapter(mAdapter);
-        List<LocationEntity> list = mLocationDao.queryAll();
-        mAdapter.refresh(list);
-        mResultTv.setText("没有定位");
 
     }
 
