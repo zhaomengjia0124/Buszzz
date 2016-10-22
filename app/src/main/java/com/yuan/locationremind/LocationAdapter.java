@@ -59,9 +59,11 @@ public class LocationAdapter extends RecyclerView.Adapter<CViewHolder> {
             holder.switchBt.setChecked(true);
         }
 
+
         holder.setIb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                closeRemind(entity);
                 toLocationSetActivity(entity);
             }
         });

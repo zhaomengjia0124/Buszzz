@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.amap.api.location.AMapLocation;
 import com.yuan.locationremind.entity.LocationEntity;
 import com.yuan.locationremind.sqlite.LocationDao;
 
@@ -68,7 +69,7 @@ public class LocationListActivity extends CheckPermissionsActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(1, 1, 1, "新建").setIcon(R.mipmap.ic_add).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.add(1, 1, 1, "").setIcon(R.mipmap.ic_add).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -100,10 +101,11 @@ public class LocationListActivity extends CheckPermissionsActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onLocationChanged(LocationEntity event) {
+    public void onLocationChanged(AMapLocation location) {
         StringBuilder sb = new StringBuilder();
-        sb.append("经度：").append(event.getLongitude()).append("  ");
-        sb.append("纬度：").append(event.getLatitude());
+        sb.append("经度：").append(location.getLongitude()).append("  ");
+        sb.append("纬度：").append(location.getLatitude()). append("  ");
+        sb.append("速度：").append(location.getSpeed());
         mResultTv.setText(sb);
     }
 

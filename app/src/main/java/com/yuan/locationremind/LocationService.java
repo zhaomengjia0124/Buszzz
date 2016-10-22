@@ -64,7 +64,9 @@ public class LocationService extends Service implements AMapLocationListener {
             Bundle bundle = intent.getExtras();
             int status = bundle.getInt("event");
             if (status == 1) {
-                vibrate();
+                startVaibrate();
+            }else if(status == 2) {
+                stopVibrate();
             }
         }
     };
@@ -93,15 +95,20 @@ public class LocationService extends Service implements AMapLocationListener {
         if (mPendingIntent != null && mLocationClient != null) {
             mLocationClient.removeGeoFenceAlert(mPendingIntent);
         }else{
-            initLocationOption();
             initLocationClient();
         }
 
         if (mLoactionEntity != null) {
             mInterval = mLoactionEntity.getInterval();
             mRadius = mLoactionEntity.getRadius();
-            mLocationClient.addGeoFenceAlert("fenceId", mLoactionEntity.getLatitude(), mLoactionEntity.getLongitude(), mInterval, -1, mPendingIntent);// 39.978578, 116.352245
+            mLocationClient.addGeoFenceAlert("fenceId", mLoactionEntity.getLatitude(), mLoactionEntity.getLongitude(), mRadius, -1, mPendingIntent);// 39.978578, 116.352245
+
+            mLocationOption = new AMapLocationClientOption();
+            mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+            mLocationOption.setNeedAddress(true);
+            mLocationOption.setGpsFirst(false);
             mLocationOption.setInterval(mInterval);
+
             mLocationClient.setLocationOption(mLocationOption);
 
             mLocationClient.startLocation();
@@ -128,13 +135,6 @@ public class LocationService extends Service implements AMapLocationListener {
         }
     }
 
-    private void initLocationOption() {
-        mLocationOption = new AMapLocationClientOption();
-        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
-        mLocationOption.setNeedAddress(true);
-        mLocationOption.setGpsFirst(false);
-        mLocationOption.setInterval(2000);
-    }
 
     private void initLocationClient() {
 
@@ -142,8 +142,6 @@ public class LocationService extends Service implements AMapLocationListener {
         mPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
         mLocationClient = new AMapLocationClient(this.getApplicationContext());
         mLocationClient.setLocationListener(this);
-        initLocationOption();
-        mLocationClient.setLocationOption(mLocationOption);
 
     }
 
@@ -159,20 +157,22 @@ public class LocationService extends Service implements AMapLocationListener {
         registerReceiver(mLocationReceiver, filter);
     }
 
-    private void vibrate() {
+    private void startVaibrate() {
         long[] pattern = {100, 200, 100, 200, 100, 300, 100, 400, 100, 500, 100, 600};
         mVibrator.vibrate(pattern, pattern.length / 2);
+    }
+
+    private void stopVibrate() {
+        if (mVibrator != null) {
+            mVibrator.cancel();
+        }
     }
 
 
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
         if (null != aMapLocation) {
-            LocationEntity entity = new LocationEntity();
-            entity.setAddress(aMapLocation.getAddress());
-            entity.setLatitude(aMapLocation.getLatitude());
-            entity.setLongitude(aMapLocation.getLongitude());
-            EventBus.getDefault().post(entity);
+            EventBus.getDefault().post(aMapLocation);
         }
     }
 

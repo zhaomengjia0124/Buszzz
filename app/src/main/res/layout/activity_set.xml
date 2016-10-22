@@ -38,5 +38,14 @@
         android:hint="设置范围半径"
         android:inputType="numberDecimal"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="间隔单位为‘毫秒’，半径单位为‘米’，由于定位存在误差，建议半径最小不要小于100。"
+        android:layout_marginTop="14dp"
+        android:paddingLeft="18dp"
+        android:paddingRight="14dp"
+        android:textSize="12sp"/>
+
 
 </LinearLayout>
