@@ -21,27 +21,21 @@ import com.yuan.locationremind.entity.LocationEntity;
 import com.yuan.locationremind.sqlite.LocationDao;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class LocationService extends Service implements AMapLocationListener {
 
-
-    private AMapLocationClientOption mLocationOption;
-
-    private PendingIntent mAlarmPendingIntent = null;
-
-    private AlarmManager mAlarmManager = null;
 
     private Vibrator mVibrator;
 
     private AMapLocationClient mLocationClient;
 
-    private int mInterval;
-
-    private float mRadius;
-
-    private LocationEntity mLoactionEntity;
+    private LocationEntity mLocationEntity;
 
     private PendingIntent mPendingIntent;
+
+    private AMapLocation mLatestLocation;
     /**
      * 闹钟广播
      */
@@ -64,7 +58,7 @@ public class LocationService extends Service implements AMapLocationListener {
             Bundle bundle = intent.getExtras();
             int status = bundle.getInt("event");
             if (status == 1) {
-                startVaibrate();
+                startVibrate();
             }else if(status == 2) {
                 stopVibrate();
             }
@@ -79,6 +73,7 @@ public class LocationService extends Service implements AMapLocationListener {
 
         registerAlarmReceiver();
         registerLocationReceiver();
+        EventBus.getDefault().register(this);
 
         mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
     }
@@ -90,7 +85,7 @@ public class LocationService extends Service implements AMapLocationListener {
             return super.onStartCommand(intent, flags, startId);
         }
 
-        mLoactionEntity = (LocationEntity) intent.getSerializableExtra("entity");
+        mLocationEntity = (LocationEntity) intent.getSerializableExtra("entity");
 
         if (mPendingIntent != null && mLocationClient != null) {
             mLocationClient.removeGeoFenceAlert(mPendingIntent);
@@ -98,18 +93,17 @@ public class LocationService extends Service implements AMapLocationListener {
             initLocationClient();
         }
 
-        if (mLoactionEntity != null) {
-            mInterval = mLoactionEntity.getInterval();
-            mRadius = mLoactionEntity.getRadius();
-            mLocationClient.addGeoFenceAlert("fenceId", mLoactionEntity.getLatitude(), mLoactionEntity.getLongitude(), mRadius, -1, mPendingIntent);// 39.978578, 116.352245
+        if (mLocationEntity != null) {
+            int interval = mLocationEntity.getInterval();
+            float radius = mLocationEntity.getRadius();
+            mLocationClient.addGeoFenceAlert("fenceId", mLocationEntity.getLatitude(), mLocationEntity.getLongitude(), radius, -1, mPendingIntent);// 39.978578, 116.352245
 
-            mLocationOption = new AMapLocationClientOption();
-            mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
-            mLocationOption.setNeedAddress(true);
-            mLocationOption.setGpsFirst(false);
-            mLocationOption.setInterval(mInterval);
-
-            mLocationClient.setLocationOption(mLocationOption);
+            AMapLocationClientOption locationOption = new AMapLocationClientOption();
+            locationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+            locationOption.setNeedAddress(true);
+            locationOption.setGpsFirst(false);
+            locationOption.setInterval(interval);
+            mLocationClient.setLocationOption(locationOption);
 
             mLocationClient.startLocation();
             EventBus.getDefault().post(true);
@@ -126,12 +120,12 @@ public class LocationService extends Service implements AMapLocationListener {
     private void initAlarm() {
         Intent alarmIntent = new Intent();
         alarmIntent.setAction("com.location.buszzz.alarm");
-        mAlarmPendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
-        mAlarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
         int alarmInterval = 10;
-        if (null != mAlarmManager) {
-            mAlarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 2 * 1000, alarmInterval * 1000, mAlarmPendingIntent);
+        if (null != alarmManager) {
+            alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 2 * 1000, alarmInterval * 1000, alarmPendingIntent);
         }
     }
 
@@ -157,7 +151,7 @@ public class LocationService extends Service implements AMapLocationListener {
         registerReceiver(mLocationReceiver, filter);
     }
 
-    private void startVaibrate() {
+    private void startVibrate() {
         long[] pattern = {100, 200, 100, 200, 100, 300, 100, 400, 100, 500, 100, 600};
         mVibrator.vibrate(pattern, pattern.length / 2);
     }
@@ -169,16 +163,28 @@ public class LocationService extends Service implements AMapLocationListener {
     }
 
 
+
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
         if (null != aMapLocation) {
+            mLatestLocation = aMapLocation;
             EventBus.getDefault().post(aMapLocation);
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void restoreLatestLocation(LocationListActivity entity) {
+        if(mLatestLocation != null) {
+            EventBus.getDefault().post(mLatestLocation);
+        }
+    }
+
+
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        EventBus.getDefault().unregister(this);
 
         if (mAlarmReceiver != null) {
             unregisterReceiver(mAlarmReceiver);
@@ -196,13 +202,11 @@ public class LocationService extends Service implements AMapLocationListener {
             mLocationClient.onDestroy();
         }
 
-        if (mLoactionEntity != null) {
+        if (mLocationEntity != null) {
             LocationDao dao = new LocationDao(this);
-            mLoactionEntity.setSelected(0);
-            dao.update(mLoactionEntity);
+            mLocationEntity.setSelected(0);
+            dao.update(mLocationEntity);
         }
-
-
 
     }
 

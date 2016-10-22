@@ -64,6 +64,7 @@ public class LocationListActivity extends CheckPermissionsActivity {
         List<LocationEntity> list = mLocationDao.queryAll();
         mAdapter.refresh(list);
         mResultTv.setText("没有定位");
+
     }
 
 
@@ -83,6 +84,7 @@ public class LocationListActivity extends CheckPermissionsActivity {
     protected void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
+        getLatestLocation();
     }
 
     @Override
@@ -104,8 +106,8 @@ public class LocationListActivity extends CheckPermissionsActivity {
     public void onLocationChanged(AMapLocation location) {
         StringBuilder sb = new StringBuilder();
         sb.append("经度：").append(location.getLongitude()).append("  ");
-        sb.append("纬度：").append(location.getLatitude()). append("  ");
-        sb.append("速度：").append(location.getSpeed());
+        sb.append("纬度：").append(location.getLatitude()).append("\n");
+        sb.append("位置：").append(location.getAddress());
         mResultTv.setText(sb);
     }
 
@@ -118,16 +120,35 @@ public class LocationListActivity extends CheckPermissionsActivity {
         }
     }
 
+    /**
+     * 如果被回收，则将状态重置
+     *
+     * @param outState bundle
+     */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         LocationDao dao = new LocationDao(this);
 
         for (LocationEntity entity : dao.queryAll()) {
-            if(entity.getSelected() == 1) {
+            if (entity.getSelected() == 1) {
                 entity.setSelected(0);
                 mLocationDao.update(entity);
             }
         }
         super.onSaveInstanceState(outState);
     }
+
+    /**
+     * Activity被关闭，而service还在运行，再次再开Activity时，则定位状态会显示没有定位
+     * 从数据库里拿出数据，判断如果有定位，则通知service 拿着最后一次定位的信息，回调一次刷新
+     */
+    private void getLatestLocation() {
+        LocationDao dao = new LocationDao(this);
+        for (LocationEntity entity : dao.queryAll()) {
+            if (entity.getSelected() == 1) {
+                EventBus.getDefault().post(this);
+            }
+        }
+    }
 }
+
