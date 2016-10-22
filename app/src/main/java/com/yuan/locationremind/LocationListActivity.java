@@ -84,22 +84,30 @@ public class LocationListActivity extends CheckPermissionsActivity {
     protected void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
-        getLatestLocation();
+        if (getCurrentRemind() != null) {
+            EventBus.getDefault().post(this);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshView(null);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void refreshView(LocationService service) {
+        List<LocationEntity> list = mLocationDao.queryAll();
+        mAdapter.refresh(list);
+        if(getCurrentRemind() == null) {
+            mResultTv.setText("没有定位");
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onLocationHandle(boolean operation) {
-        if (operation) {
-            mToolbar.setSubtitle(R.string.location_start);
-        } else {
-            mToolbar.setSubtitle(R.string.location_stop);
-        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -127,28 +135,26 @@ public class LocationListActivity extends CheckPermissionsActivity {
      */
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        LocationDao dao = new LocationDao(this);
-
-        for (LocationEntity entity : dao.queryAll()) {
-            if (entity.getSelected() == 1) {
-                entity.setSelected(0);
-                mLocationDao.update(entity);
-            }
+        LocationEntity entity = getCurrentRemind();
+        if (entity != null) {
+            entity.setSelected(0);
+            mLocationDao.update(entity);
         }
         super.onSaveInstanceState(outState);
     }
 
+
     /**
-     * Activity被关闭，而service还在运行，再次再开Activity时，则定位状态会显示没有定位
-     * 从数据库里拿出数据，判断如果有定位，则通知service 拿着最后一次定位的信息，回调一次刷新
+     *得到当前开启提醒
      */
-    private void getLatestLocation() {
-        LocationDao dao = new LocationDao(this);
-        for (LocationEntity entity : dao.queryAll()) {
-            if (entity.getSelected() == 1) {
-                EventBus.getDefault().post(this);
+    private LocationEntity getCurrentRemind() {
+        for (LocationEntity e : mLocationDao.queryAll()) {
+            if (e.getSelected() == 1) {
+                return e;
             }
         }
+
+        return null;
     }
 }
 

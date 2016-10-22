@@ -88,15 +88,19 @@ public class LocationSetActivity extends AppCompatActivity {
 
     private boolean saveSets() {
         String interval = mIntervalEt.getText().toString();
-        if(TextUtils.isEmpty(interval)){
+        if (TextUtils.isEmpty(interval)) {
             Toast.makeText(this, "间隔不能为空", Toast.LENGTH_SHORT).show();
             return true;
         }
 
         String radius = mRadiusEt.getText().toString();
-        if(TextUtils.isEmpty(radius)){
+        if (TextUtils.isEmpty(radius)) {
             Toast.makeText(this, "半径不能为空", Toast.LENGTH_SHORT).show();
             return true;
+        }
+
+        if (Float.valueOf(radius) < 100) {
+            Toast.makeText(this, "半径最小为100，否则有时候不能定位！", Toast.LENGTH_SHORT).show();
         }
 
         mLocationEntity.setRadius(Float.valueOf(radius));

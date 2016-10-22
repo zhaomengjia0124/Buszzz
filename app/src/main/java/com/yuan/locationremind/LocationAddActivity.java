@@ -8,20 +8,14 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.textservice.SuggestionsInfo;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.yuan.locationremind.entity.LocationEntity;
 import com.yuan.locationremind.sqlite.LocationDao;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static com.yuan.locationremind.LocationListActivity.REQUEST_CODE;
 
 /**
  * Created by Yuan on 20/10/2016:1:03 PM.
@@ -104,6 +98,7 @@ public class LocationAddActivity extends AppCompatActivity {
             Toast.makeText(this, "经度超出范围", Toast.LENGTH_SHORT).show();
             return;
         }
+
         if (entity == null) {
             entity = new LocationEntity();
         }

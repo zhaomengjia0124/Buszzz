@@ -7,11 +7,18 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
+import android.graphics.PixelFormat;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.os.Vibrator;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -27,15 +34,13 @@ import org.greenrobot.eventbus.ThreadMode;
 public class LocationService extends Service implements AMapLocationListener {
 
 
+    TextView textView;
     private Vibrator mVibrator;
-
     private AMapLocationClient mLocationClient;
-
     private LocationEntity mLocationEntity;
-
     private PendingIntent mPendingIntent;
-
     private AMapLocation mLatestLocation;
+    private WindowManager mWindowMnanager;
     /**
      * 闹钟广播
      */
@@ -58,8 +63,10 @@ public class LocationService extends Service implements AMapLocationListener {
             Bundle bundle = intent.getExtras();
             int status = bundle.getInt("event");
             if (status == 1) {
+                showTip();
                 startVibrate();
-            }else if(status == 2) {
+            } else if (status == 2) {
+                dismissTip();
                 stopVibrate();
             }
         }
@@ -89,7 +96,7 @@ public class LocationService extends Service implements AMapLocationListener {
 
         if (mPendingIntent != null && mLocationClient != null) {
             mLocationClient.removeGeoFenceAlert(mPendingIntent);
-        }else{
+        } else {
             initLocationClient();
         }
 
@@ -131,7 +138,6 @@ public class LocationService extends Service implements AMapLocationListener {
 
 
     private void initLocationClient() {
-
         Intent intent = new Intent("com.location.buszzz.broadcast");
         mPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
         mLocationClient = new AMapLocationClient(this.getApplicationContext());
@@ -163,18 +169,18 @@ public class LocationService extends Service implements AMapLocationListener {
     }
 
 
-
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
         if (null != aMapLocation) {
             mLatestLocation = aMapLocation;
             EventBus.getDefault().post(aMapLocation);
+
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void restoreLatestLocation(LocationListActivity entity) {
-        if(mLatestLocation != null) {
+        if (mLatestLocation != null) {
             EventBus.getDefault().post(mLatestLocation);
         }
     }
@@ -186,28 +192,82 @@ public class LocationService extends Service implements AMapLocationListener {
 
         EventBus.getDefault().unregister(this);
 
-        if (mAlarmReceiver != null) {
-            unregisterReceiver(mAlarmReceiver);
+        release();
+
+    }
+
+    private void release() {
+
+        try {
+            if (mAlarmReceiver != null) {
+                unregisterReceiver(mAlarmReceiver);
+            }
+
+            if (mLocationReceiver != null) {
+                unregisterReceiver(mLocationReceiver);
+            }
+
+            if (mVibrator != null) {
+                mVibrator.cancel();
+            }
+
+            if (mLocationClient != null) {
+                mLocationClient.onDestroy();
+            }
+
+            if (mLocationEntity != null) {
+                LocationDao dao = new LocationDao(this);
+                mLocationEntity.setSelected(0);
+                dao.update(mLocationEntity);
+            }
+
+            dismissTip();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        if (mLocationReceiver != null) {
-            unregisterReceiver(mLocationReceiver);
+
+    }
+
+    private void showTip() {
+
+        mWindowMnanager = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+        WindowManager.LayoutParams params = new WindowManager.LayoutParams();
+        params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;// 系统提示window
+        params.format = PixelFormat.TRANSLUCENT;// 支持透明
+        //params.format = PixelFormat.RGBA_8888;
+        params.flags |= WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;// 焦点
+        params.width = 600;//窗口的宽和高
+        params.height = 200;
+        params.gravity = Gravity.CENTER;
+        params.x = 0;//窗口位置的偏移量
+        params.y = 0;
+
+        textView = new TextView(this);
+        textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        textView.setGravity(Gravity.CENTER);
+        textView.setTextColor(Color.WHITE);
+        textView.setBackgroundColor(Color.parseColor("#ffbf40"));
+        textView.setPadding(50, 50, 50, 50);
+        textView.setText("到站了，点我关闭提醒！");
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                release();
+            }
+        });
+
+        if (textView.getParent() == null) {
+            mWindowMnanager.addView(textView, params);
         }
 
-        if (mVibrator != null) {
-            mVibrator.cancel();
-        }
+    }
 
-        if (mLocationClient != null) {
-            mLocationClient.onDestroy();
+    public void dismissTip() {
+        if (mWindowMnanager != null && textView != null && textView.getParent() != null) {
+            mWindowMnanager.removeView(textView);
+            EventBus.getDefault().post(this);
         }
-
-        if (mLocationEntity != null) {
-            LocationDao dao = new LocationDao(this);
-            mLocationEntity.setSelected(0);
-            dao.update(mLocationEntity);
-        }
-
     }
 
 }
