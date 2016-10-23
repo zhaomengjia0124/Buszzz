@@ -7,8 +7,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.AnimationDrawable;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -19,7 +19,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.TextView;
+import android.widget.ImageView;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -35,7 +35,7 @@ import org.greenrobot.eventbus.ThreadMode;
 public class LocationService extends Service implements AMapLocationListener {
 
 
-    TextView textView;
+    ImageView textView;
     private Vibrator mVibrator;
     private AMapLocationClient mLocationClient;
     private LocationEntity mLocationEntity;
@@ -114,7 +114,6 @@ public class LocationService extends Service implements AMapLocationListener {
             mLocationClient.setLocationOption(locationOption);
 
             mLocationClient.startLocation();
-            EventBus.getDefault().post(true);
         }
 
         return START_STICKY;
@@ -241,18 +240,17 @@ public class LocationService extends Service implements AMapLocationListener {
         //params.format = PixelFormat.RGBA_8888;
 //        params.flags |= WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;// 焦点
         params.width = 600;//窗口的宽和高
-        params.height = 200;
+        params.height = 400;
         params.gravity = Gravity.CENTER;
         params.x = 0;//窗口位置的偏移量
         params.y = 0;
 
-        textView = new TextView(this);
-        textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        textView.setGravity(Gravity.CENTER);
-        textView.setTextColor(Color.WHITE);
-        textView.setBackgroundColor(Color.parseColor("#ffbf40"));
-        textView.setPadding(50, 50, 50, 50);
-        textView.setText("到站了，点我关闭提醒！");
+        textView = new ImageView(this);
+        textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        textView.setBackgroundResource(R.drawable.remind);
+        AnimationDrawable d = (AnimationDrawable) textView.getBackground();
+        d.start();
+//        textView.setText("到站了，点我关闭提醒！");
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
