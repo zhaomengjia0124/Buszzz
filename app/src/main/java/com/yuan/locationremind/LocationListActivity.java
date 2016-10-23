@@ -1,12 +1,15 @@
 package com.yuan.locationremind;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -38,12 +41,10 @@ public class LocationListActivity extends CheckPermissionsActivity {
 
     @BindView(R.id.resultInfoTv)
     TextView mResultTv;
-
+    boolean bBackPressed;
     private LocationDao mLocationDao;
-
     private LocationAdapter mAdapter;
-
-    private Toolbar mToolbar;
+    private AMapLocation mLocation;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,8 +54,8 @@ public class LocationListActivity extends CheckPermissionsActivity {
         ButterKnife.bind(this);
 
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         mLocationDao = new LocationDao(this);
 
@@ -62,8 +63,21 @@ public class LocationListActivity extends CheckPermissionsActivity {
         mAdapter = new LocationAdapter(this);
         mRecyclerView.setAdapter(mAdapter);
 
+        handleState(savedInstanceState);
+
     }
 
+    private void handleState(@Nullable Bundle savedInstanceState) {
+        if (!isServiceWork(this, "com.yuan.locationremind.LocationService")) {
+            if (BuildConfig.DEBUG) Log.d("LocationListActivity", "isnot");
+            for (LocationEntity entity : mLocationDao.queryAll()) {
+                if (entity.getSelected() == 1) {
+                    entity.setSelected(0);
+                    mLocationDao.update(entity);
+                }
+            }
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -96,7 +110,7 @@ public class LocationListActivity extends CheckPermissionsActivity {
     public void refreshView(LocationService service) {
         List<LocationEntity> list = mLocationDao.queryAll();
         mAdapter.refresh(list);
-        if(getCurrentRemind() == null) {
+        if (getCurrentRemind() == null) {
             mResultTv.setText("没有定位");
         }
     }
@@ -109,6 +123,7 @@ public class LocationListActivity extends CheckPermissionsActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLocationChanged(AMapLocation location) {
+        mLocation = location;
         StringBuilder sb = new StringBuilder();
         sb.append("经度：").append(location.getLongitude()).append("  ");
         sb.append("纬度：").append(location.getLatitude()).append("\n");
@@ -126,23 +141,28 @@ public class LocationListActivity extends CheckPermissionsActivity {
     }
 
     /**
-     * 如果被回收，则将状态重置
+     * 如果有可能被回收，则将状态重置
      *
      * @param outState bundle
      */
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        LocationEntity entity = getCurrentRemind();
-        if (entity != null) {
-            entity.setSelected(0);
-            mLocationDao.update(entity);
-        }
+        if (BuildConfig.DEBUG) Log.d("LocationListActivity", "onSaveInstanceState");
+        outState.putParcelable("location", mLocation);
+
         super.onSaveInstanceState(outState);
     }
 
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        handleState(savedInstanceState);
+        refreshView(null);
+        if (BuildConfig.DEBUG) Log.d("LocationListActivity", "onRestoreInstanceState");
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 
     /**
-     *得到当前开启提醒
+     * 得到当前开启提醒
      */
     private LocationEntity getCurrentRemind() {
         for (LocationEntity e : mLocationDao.queryAll()) {
@@ -152,6 +172,42 @@ public class LocationListActivity extends CheckPermissionsActivity {
         }
 
         return null;
+    }
+
+    public boolean isServiceWork(Context mContext, String serviceName) {
+        boolean isWork = false;
+        ActivityManager myAM = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningServiceInfo> myList = myAM.getRunningServices(Integer.MAX_VALUE);
+        if (myList.size() <= 0) {
+            return false;
+        }
+        for (int i = 0; i < myList.size(); i++) {
+            String mName = myList.get(i).service.getClassName().toString();
+            if (mName.equals(serviceName)) {
+                isWork = true;
+                break;
+            }
+        }
+        return isWork;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (!bBackPressed) {
+            for (LocationEntity entity : mLocationDao.queryAll()) {
+                if (entity.getSelected() == 1) {
+                    entity.setSelected(0);
+                    mLocationDao.update(entity);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        bBackPressed = true;
+        super.onBackPressed();
     }
 }
 

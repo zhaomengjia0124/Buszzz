@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -116,7 +117,7 @@ public class LocationService extends Service implements AMapLocationListener {
             EventBus.getDefault().post(true);
         }
 
-        return super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
 
     @Override
@@ -193,6 +194,8 @@ public class LocationService extends Service implements AMapLocationListener {
         EventBus.getDefault().unregister(this);
 
         release();
+
+        if (BuildConfig.DEBUG) Log.d("LocationService", "onDestroy");
 
     }
 
