@@ -16,6 +16,7 @@ import android.os.SystemClock;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -35,7 +36,7 @@ import org.greenrobot.eventbus.ThreadMode;
 public class LocationService extends Service implements AMapLocationListener {
 
 
-    ImageView textView;
+    ImageView mRemindAnmationIv;
     private Vibrator mVibrator;
     private AMapLocationClient mLocationClient;
     private LocationEntity mLocationEntity;
@@ -245,28 +246,27 @@ public class LocationService extends Service implements AMapLocationListener {
         params.x = 0;//窗口位置的偏移量
         params.y = 0;
 
-        textView = new ImageView(this);
-        textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        textView.setBackgroundResource(R.drawable.remind);
-        AnimationDrawable d = (AnimationDrawable) textView.getBackground();
-        d.start();
-//        textView.setText("到站了，点我关闭提醒！");
-        textView.setOnClickListener(new View.OnClickListener() {
+        mRemindAnmationIv = (ImageView) LayoutInflater.from(this).inflate(R.layout.remind, null);
+        mRemindAnmationIv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        mRemindAnmationIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 release();
             }
         });
-
-        if (textView.getParent() == null) {
-            mWindowMnanager.addView(textView, params);
+        AnimationDrawable animationDrawable = (AnimationDrawable) mRemindAnmationIv.getBackground();
+        animationDrawable.start();
+        if (mRemindAnmationIv.getParent() == null) {
+            mWindowMnanager.addView(mRemindAnmationIv, params);
         }
 
     }
 
     public void dismissTip() {
-        if (mWindowMnanager != null && textView != null && textView.getParent() != null) {
-            mWindowMnanager.removeView(textView);
+        if (mWindowMnanager != null && mRemindAnmationIv != null && mRemindAnmationIv.getParent() != null) {
+            AnimationDrawable animationDrawable = (AnimationDrawable) mRemindAnmationIv.getBackground();
+            animationDrawable.stop();
+            mWindowMnanager.removeView(mRemindAnmationIv);
             EventBus.getDefault().post(this);
         }
     }

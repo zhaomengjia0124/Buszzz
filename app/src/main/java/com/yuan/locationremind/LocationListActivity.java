@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -36,6 +35,7 @@ import butterknife.ButterKnife;
 public class LocationListActivity extends CheckPermissionsActivity {
 
     public static int REQUEST_CODE = 1;
+
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
 
@@ -69,7 +69,6 @@ public class LocationListActivity extends CheckPermissionsActivity {
 
     private void handleState(@Nullable Bundle savedInstanceState) {
         if (!isServiceWork(this, "com.yuan.locationremind.LocationService")) {
-            if (BuildConfig.DEBUG) Log.d("LocationListActivity", "isnot");
             for (LocationEntity entity : mLocationDao.queryAll()) {
                 if (entity.getSelected() == 1) {
                     entity.setSelected(0);
@@ -147,9 +146,7 @@ public class LocationListActivity extends CheckPermissionsActivity {
      */
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (BuildConfig.DEBUG) Log.d("LocationListActivity", "onSaveInstanceState");
         outState.putParcelable("location", mLocation);
-
         super.onSaveInstanceState(outState);
     }
 
@@ -157,7 +154,6 @@ public class LocationListActivity extends CheckPermissionsActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         handleState(savedInstanceState);
         refreshView(null);
-        if (BuildConfig.DEBUG) Log.d("LocationListActivity", "onRestoreInstanceState");
         super.onRestoreInstanceState(savedInstanceState);
     }
 
