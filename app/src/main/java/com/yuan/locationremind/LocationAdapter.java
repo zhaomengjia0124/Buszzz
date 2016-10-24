@@ -20,7 +20,7 @@ import java.util.List;
  * Description:com.yuan.locationremind.LocationAdatper
  */
 
-public class LocationAdapter extends RecyclerView.Adapter<CViewHolder> {
+class LocationAdapter extends RecyclerView.Adapter<CViewHolder> {
 
     private Context mContext;
 
@@ -28,12 +28,12 @@ public class LocationAdapter extends RecyclerView.Adapter<CViewHolder> {
 
     private LocationDao mLocationDao;
 
-    public LocationAdapter(Context context) {
+    LocationAdapter(Context context) {
         mContext = context;
         mLocationDao = new LocationDao(mContext);
     }
 
-    public void refresh(List<LocationEntity> list) {
+    void refresh(List<LocationEntity> list) {
         mDataList = list == null ? Collections.<LocationEntity>emptyList() : list;
         notifyDataSetChanged();
     }
@@ -47,6 +47,8 @@ public class LocationAdapter extends RecyclerView.Adapter<CViewHolder> {
     @Override
     public void onBindViewHolder(final CViewHolder holder, int position) {
         final LocationEntity entity = mDataList.get(position);
+
+        holder.nameTv.setText(entity.getName());
         holder.addressTv.setText(entity.getAddress());
         holder.latitudeTv.setText(String.valueOf(entity.getLatitude()));
         holder.longitudeTv.setText(String.valueOf(entity.getLongitude()));

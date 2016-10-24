@@ -1,12 +1,11 @@
 package com.yuan.locationremind;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.widget.EditText;
 
 import com.amap.api.services.help.Inputtips;
 import com.amap.api.services.help.InputtipsQuery;
@@ -53,7 +52,6 @@ public class SearchActivity extends AppCompatActivity implements Inputtips.Input
 
         InputtipsQuery inputQuery = new InputtipsQuery(mEditText.getText().toString(), "");
         inputQuery.setCityLimit(true);
-
 
         Inputtips inputTips = new Inputtips(this, inputQuery);
         inputTips.setInputtipsListener(this);

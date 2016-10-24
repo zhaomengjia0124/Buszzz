@@ -10,11 +10,12 @@ import java.io.Serializable;
 
 public class LocationEntity implements Serializable {
     private int id;
+    private String name;
     private String address;
     private double latitude;
     private double longitude;
     private int selected;//是否使用中
-    private float radius;//半径
+    private int radius;//半径
     private int interval;//刷新间隔
 
     public int getId() {
@@ -49,11 +50,11 @@ public class LocationEntity implements Serializable {
         this.longitude = longitude;
     }
 
-    public float getRadius() {
+    public int getRadius() {
         return radius;
     }
 
-    public void setRadius(float radius) {
+    public void setRadius(int radius) {
         this.radius = radius;
     }
 
@@ -65,7 +66,6 @@ public class LocationEntity implements Serializable {
         this.interval = interval;
     }
 
-
     public int getSelected() {
         return selected;
     }
@@ -74,17 +74,12 @@ public class LocationEntity implements Serializable {
         this.selected = selected;
     }
 
-    @Override
-    public String toString() {
-        return "LocationEntity{" +
-                "id=" + id +
-                ", address='" + address + '\'' +
-                ", latitude=" + latitude +
-                ", longitude=" + longitude +
-                ", selected=" + selected +
-                ", radius=" + radius +
-                ", interval=" + interval +
-                '}';
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
 

@@ -1,14 +1,20 @@
 package com.yuan.locationremind;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.yuan.locationremind.entity.LocationEntity;
@@ -25,15 +31,14 @@ import butterknife.ButterKnife;
 
 public class LocationAddActivity extends AppCompatActivity {
 
-    @BindView(R.id.latitudeEt)
-    EditText mLatitudeEt;
-
-    @BindView(R.id.longitudeEt)
-    EditText mLongitudeEt;
-
-    private Toolbar mToolbar;
 
     private static int REQUEST_CODE = 1;
+    @BindView(R.id.addressEt)
+    EditText mAddressEt;
+    @BindView(R.id.latitudeEt)
+    EditText mLatitudeEt;
+    @BindView(R.id.longitudeEt)
+    EditText mLongitudeEt;
     LocationEntity entity;
 
     @Override
@@ -41,8 +46,8 @@ public class LocationAddActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_address);
         ButterKnife.bind(this);
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
     }
 
@@ -76,42 +81,107 @@ public class LocationAddActivity extends AppCompatActivity {
             if (entity != null) {
                 mLatitudeEt.setText(String.valueOf(entity.getLatitude()));
                 mLongitudeEt.setText(String.valueOf(entity.getLongitude()));
+                mAddressEt.setText(String.valueOf(entity.getAddress()));
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void saveLocation() {
-        String latitude = mLatitudeEt.getText().toString();
-        String longitude = mLongitudeEt.getText().toString();
-        if (TextUtils.isEmpty(latitude) || TextUtils.isEmpty(longitude)) {
-            Toast.makeText(this, "经度或纬度不能为空", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        double la = Double.parseDouble(latitude);
-        double lo = Double.parseDouble(longitude);
-        if (la > 360 || la < 0) {
-            Toast.makeText(this, "纬度超出范围", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (lo > 360 || lo < 0) {
-            Toast.makeText(this, "经度超出范围", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        VerifyInfo verifyInfo = new VerifyInfo().invoke();
+        if (verifyInfo.is()) return;
+        final double la = verifyInfo.getLa();
+        final double lo = verifyInfo.getLo();
+        setName(la, lo);
 
+    }
+
+    private void setName(final double la, final double lo) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setMessage("请输入名称");
+
+        LinearLayout inputLayout = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.input_name, null);
+        builder.setView(inputLayout);
+        final EditText editText = (EditText) inputLayout.findViewById(R.id.inputNameEt);
+        final String address = mAddressEt.getText().toString();
+        editText.setText(address);
+        editText.setSelection(0, address.length());
+        editText.requestFocus();
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                updateDao(la, lo, editText.getText().toString());
+                setResult(RESULT_OK);
+                finish();
+            }
+        });
+
+        builder.setNegativeButton("取消", null);
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            public void onShow(DialogInterface dialog) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+            }
+        });
+        dialog.show();
+    }
+
+    private void updateDao(double la, double lo, String name) {
         if (entity == null) {
             entity = new LocationEntity();
         }
         entity.setLatitude(la);
         entity.setLongitude(lo);
+        entity.setName(name);
+        entity.setAddress(mAddressEt.getText().toString());
         entity.setInterval(Constants.REFRESH_INTERVAL);
         entity.setRadius(Constants.RADIUS);
 
         LocationDao dao = new LocationDao(this);
         dao.insert(entity);
-        setResult(RESULT_OK);
-        finish();
     }
 
+    private class VerifyInfo {
+        private boolean myResult;
+        private double la;
+        private double lo;
 
+        boolean is() {
+            return myResult;
+        }
+
+        double getLa() {
+            return la;
+        }
+
+        double getLo() {
+            return lo;
+        }
+
+        VerifyInfo invoke() {
+            String latitude = mLatitudeEt.getText().toString();
+            String longitude = mLongitudeEt.getText().toString();
+            if (TextUtils.isEmpty(latitude) || TextUtils.isEmpty(longitude)) {
+                Toast.makeText(LocationAddActivity.this, "经度或纬度不能为空", Toast.LENGTH_SHORT).show();
+                myResult = true;
+                return this;
+            }
+            la = Double.parseDouble(latitude);
+            lo = Double.parseDouble(longitude);
+            if (la > 360 || la < 0) {
+                Toast.makeText(LocationAddActivity.this, "纬度超出范围", Toast.LENGTH_SHORT).show();
+                myResult = true;
+                return this;
+            }
+            if (lo > 360 || lo < 0) {
+                Toast.makeText(LocationAddActivity.this, "经度超出范围", Toast.LENGTH_SHORT).show();
+                myResult = true;
+                return this;
+            }
+            myResult = false;
+            return this;
+        }
+    }
 }

@@ -27,6 +27,28 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="名称："
+            android:textSize="16sp"/>
+
+        <EditText
+            android:id="@+id/setNameEt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="设置名称"
+            android:textSize="16sp"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="14dp"
+        android:layout_marginRight="14dp"
+        android:layout_marginTop="8dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="间隔："
             android:textSize="16sp"/>
 
@@ -45,7 +67,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="14dp"
         android:layout_marginRight="14dp"
-        android:layout_marginTop="16dp">
+        android:layout_marginTop="8dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -68,7 +90,7 @@
         android:layout_marginTop="14dp"
         android:paddingLeft="18dp"
         android:paddingRight="14dp"
-        android:text="间隔单位为‘毫秒’，半径单位为‘米’，由于定位存在误差，半径最小不能小于100。"
+        android:text="间隔单位为‘秒’，半径单位为‘米’，由于定位存在误差，半径最小不能小于100。"
         android:textSize="12sp"/>
 
 

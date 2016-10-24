@@ -24,6 +24,9 @@ import butterknife.ButterKnife;
 
 public class LocationSetActivity extends AppCompatActivity {
 
+    @BindView(R.id.setNameEt)
+    EditText mNameEt;
+
     @BindView(R.id.setIntervalEt)
     EditText mIntervalEt;
 
@@ -44,9 +47,11 @@ public class LocationSetActivity extends AppCompatActivity {
 
         mLocationEntity = (LocationEntity) intent.getSerializableExtra("entity");
         if (mLocationEntity != null) {
+            String name = mLocationEntity.getName();
             int interval = mLocationEntity.getInterval();
-            float radius = mLocationEntity.getRadius();
+            int radius = mLocationEntity.getRadius();
 
+            mNameEt.setText(name);
             mIntervalEt.setText(String.valueOf(interval));
             mRadiusEt.setText(String.valueOf(radius));
         }
@@ -104,9 +109,11 @@ public class LocationSetActivity extends AppCompatActivity {
             return;
         }
 
-        mLocationEntity.setRadius(Float.valueOf(radius));
-        mLocationEntity.setInterval(Integer.valueOf(interval));
+        String name = mNameEt.getText().toString();
 
+        mLocationEntity.setRadius(Integer.valueOf(radius));
+        mLocationEntity.setInterval(Integer.valueOf(interval));
+        mLocationEntity.setName(name);
         LocationDao dao = new LocationDao(this);
         dao.update(mLocationEntity);
 

@@ -25,7 +25,6 @@ public class LocationDao {
     public boolean insert(LocationEntity entity) {
         SQLiteDatabase database = mHelper.getWritableDatabase();
         long insert = database.insert("address_status", null, getContentValues(entity));
-        System.out.println("insert");
         database.close();
         return insert != -1;
     }
@@ -42,11 +41,13 @@ public class LocationDao {
                     double longitude = cursor.getDouble(cursor.getColumnIndex("longitude"));
                     double latitude = cursor.getDouble(cursor.getColumnIndex("latitude"));
                     String address = cursor.getString(cursor.getColumnIndex("address"));
+                    String name = cursor.getString(cursor.getColumnIndex("name"));
                     int selected = cursor.getInt(cursor.getColumnIndex("selected"));
-                    float radius = cursor.getFloat(cursor.getColumnIndex("radius"));
+                    int radius = cursor.getInt(cursor.getColumnIndex("radius"));
                     int interval = cursor.getInt(cursor.getColumnIndex("interval"));
                     entity.setId(currentId);
                     entity.setAddress(address);
+                    entity.setName(name);
                     entity.setRadius(radius);
                     entity.setInterval(interval);
                     entity.setLatitude(latitude);
@@ -80,10 +81,12 @@ public class LocationDao {
                 double longitude = cursor.getDouble(cursor.getColumnIndex("longitude"));
                 double latitude = cursor.getDouble(cursor.getColumnIndex("latitude"));
                 String address = cursor.getString(cursor.getColumnIndex("address"));
+                String name = cursor.getString(cursor.getColumnIndex("name"));
                 int selected = cursor.getInt(cursor.getColumnIndex("selected"));
-                float radius = cursor.getFloat(cursor.getColumnIndex("radius"));
+                int radius = cursor.getInt(cursor.getColumnIndex("radius"));
                 int interval = cursor.getInt(cursor.getColumnIndex("interval"));
                 entity.setId(id);
+                entity.setName(name);
                 entity.setAddress(address);
                 entity.setRadius(radius);
                 entity.setInterval(interval);
@@ -119,15 +122,9 @@ public class LocationDao {
         return delete != -1;
     }
 
-    public boolean drop() {
-        SQLiteDatabase database = mHelper.getWritableDatabase();
-        database.execSQL("DROP TABLE address_status");
-        database.close();
-        return true;
-    }
-
     private ContentValues getContentValues(LocationEntity entity) {
         ContentValues cv = new ContentValues();
+        cv.put("name", entity.getName());
         cv.put("interval", entity.getInterval());
         cv.put("address", entity.getAddress());
         cv.put("latitude", entity.getLatitude());

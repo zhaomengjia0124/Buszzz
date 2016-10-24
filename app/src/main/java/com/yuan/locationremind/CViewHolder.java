@@ -13,6 +13,7 @@ import android.widget.TextView;
  */
 public class CViewHolder extends RecyclerView.ViewHolder{
 
+    TextView nameTv;
     TextView addressTv;
     TextView longitudeTv;
     TextView latitudeTv;
@@ -23,6 +24,7 @@ public class CViewHolder extends RecyclerView.ViewHolder{
 
     public CViewHolder(View itemView) {
         super(itemView);
+        nameTv = (TextView) itemView.findViewById(R.id.remindName);
         addressTv = (TextView) itemView.findViewById(R.id.remindAddressTv);
         longitudeTv = (TextView) itemView.findViewById(R.id.remindLongitudeTv);
         latitudeTv = (TextView) itemView.findViewById(R.id.remindLatitudeTv);

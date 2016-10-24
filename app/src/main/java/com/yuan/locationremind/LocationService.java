@@ -101,7 +101,7 @@ public class LocationService extends Service implements AMapLocationListener {
         }
 
         if (mLocationEntity != null) {
-            int interval = mLocationEntity.getInterval();
+            int interval = mLocationEntity.getInterval() * 1000;
             float radius = mLocationEntity.getRadius();
             mLocationClient.addGeoFenceAlert("fenceId", mLocationEntity.getLatitude(), mLocationEntity.getLongitude(), radius, -1, mPendingIntent);// 39.978578, 116.352245
 
