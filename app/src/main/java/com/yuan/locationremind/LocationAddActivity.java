@@ -101,7 +101,7 @@ public class LocationAddActivity extends AppCompatActivity {
     private void setName(final double la, final double lo) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        builder.setMessage("请输入名称");
+        builder.setMessage("请输入标签");
 
         LinearLayout inputLayout = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.input_name, null);
         builder.setView(inputLayout);

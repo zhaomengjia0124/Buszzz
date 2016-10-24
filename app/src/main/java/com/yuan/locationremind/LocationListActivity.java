@@ -14,8 +14,8 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.amap.api.location.AMapLocation;
-import com.yuan.locationremind.entity.LocationEntity;
 import com.yuan.locationremind.db.LocationDao;
+import com.yuan.locationremind.entity.LocationEntity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -41,9 +41,13 @@ public class LocationListActivity extends CheckPermissionsActivity {
 
     @BindView(R.id.resultInfoTv)
     TextView mResultTv;
+
     boolean bBackPressed;
+
     private LocationDao mLocationDao;
+
     private LocationAdapter mAdapter;
+
     private AMapLocation mLocation;
 
     @Override
@@ -70,7 +74,6 @@ public class LocationListActivity extends CheckPermissionsActivity {
 
     /**
      * 防止service 被系统杀死，状态没改过来
-     *
      */
     private void handleState() {
         if (!isServiceWork(this, "com.yuan.locationremind.LocationService")) {

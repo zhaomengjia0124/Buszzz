@@ -89,21 +89,6 @@
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/remind_radius"/>
-
-                    <TextView
-                        android:id="@+id/remindRadiusTv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-
-                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -121,6 +106,22 @@
 
                 </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/remind_radius"/>
+
+                    <TextView
+                        android:id="@+id/remindRadiusTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
 
             </LinearLayout>
 
@@ -129,11 +130,10 @@
                 android:layout_height="wrap_content"
                 android:gravity="center">
 
-                <Switch
+                <android.support.v7.widget.SwitchCompat
                     android:id="@+id/switchLocation"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    />
+                    android:layout_height="wrap_content"/>
 
                 <ImageButton
                     android:id="@+id/remindSetIb"

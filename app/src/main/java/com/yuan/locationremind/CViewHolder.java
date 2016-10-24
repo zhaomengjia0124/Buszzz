@@ -1,9 +1,9 @@
 package com.yuan.locationremind;
 
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.Switch;
 import android.widget.TextView;
 
 /**
@@ -20,7 +20,7 @@ public class CViewHolder extends RecyclerView.ViewHolder{
     TextView radiosTv;
     TextView intervalTv;
     ImageButton setIb;
-    Switch switchBt;
+    SwitchCompat switchBt;
 
     public CViewHolder(View itemView) {
         super(itemView);
@@ -31,6 +31,6 @@ public class CViewHolder extends RecyclerView.ViewHolder{
         radiosTv = (TextView) itemView.findViewById(R.id.remindRadiusTv);
         intervalTv = (TextView) itemView.findViewById(R.id.remindRefreshIntervalTv);
         setIb = (ImageButton) itemView.findViewById(R.id.remindSetIb);
-        switchBt = (Switch) itemView.findViewById(R.id.switchLocation);
+        switchBt = (SwitchCompat) itemView.findViewById(R.id.switchLocation);
     }
 }

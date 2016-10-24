@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="app_name">Buszzz</string>
     <string name="location_list">地址列表</string>
     <string name="add">添加</string>
     <string name="add_location">添加位置</string>
@@ -9,8 +9,8 @@
     <string name="address">地址：</string>
     <string name="longitude">经度：</string>
     <string name="latitude">纬度：</string>
-    <string name="refresh_interval">刷新间隔：</string>
-    <string name="remind_radius">范围：</string>
+    <string name="refresh_interval">间隔：</string>
+    <string name="remind_radius">半径：</string>
     <string name="switchs">是否开启</string>
     <string name="action_search">Search</string>
     <string name="please_input_addr">请输入搜索地址</string>
