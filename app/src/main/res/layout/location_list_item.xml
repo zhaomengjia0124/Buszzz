@@ -139,9 +139,8 @@
                     android:id="@+id/remindSetIb"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
                     android:background="@mipmap/ic_set"
-                    android:padding="8dp"/>
+                    />
             </LinearLayout>
         </LinearLayout>
 

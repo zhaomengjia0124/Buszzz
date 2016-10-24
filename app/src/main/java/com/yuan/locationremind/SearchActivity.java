@@ -36,6 +36,7 @@ public class SearchActivity extends AppCompatActivity implements Inputtips.Input
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle("搜索");
         setContentView(R.layout.activity_search);
         ButterKnife.bind(this);
 

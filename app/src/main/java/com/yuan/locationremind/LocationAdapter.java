@@ -52,20 +52,21 @@ class LocationAdapter extends RecyclerView.Adapter<CViewHolder> {
         holder.addressTv.setText(entity.getAddress());
         holder.latitudeTv.setText(String.valueOf(entity.getLatitude()));
         holder.longitudeTv.setText(String.valueOf(entity.getLongitude()));
-        holder.intervalTv.setText(String.valueOf(entity.getInterval()));
-        holder.radiosTv.setText(String.valueOf(entity.getRadius()));
+        holder.intervalTv.setText(entity.getInterval() + "s");
+        holder.radiosTv.setText(entity.getRadius() + "m");
 
         if (entity.getSelected() == 0) {
             holder.switchBt.setChecked(false);
+            holder.setIb.setVisibility(View.VISIBLE);
         } else {
             holder.switchBt.setChecked(true);
+            holder.setIb.setVisibility(View.INVISIBLE);
         }
 
 
         holder.setIb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                closeRemind(entity);
                 toLocationSetActivity(entity);
             }
         });

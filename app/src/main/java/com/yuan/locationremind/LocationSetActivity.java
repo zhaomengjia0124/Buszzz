@@ -57,7 +57,7 @@ public class LocationSetActivity extends AppCompatActivity {
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.setting);
+        toolbar.setTitle("设置提醒");
         setSupportActionBar(toolbar);
     }
 

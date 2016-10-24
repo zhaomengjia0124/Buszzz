@@ -49,12 +49,13 @@ public class LocationListActivity extends CheckPermissionsActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle(R.string.location_list);
+        setTitle("");
         setContentView(R.layout.activity_location_list);
         ButterKnife.bind(this);
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setLogo(R.mipmap.logo);
         setSupportActionBar(toolbar);
 
         mLocationDao = new LocationDao(this);
