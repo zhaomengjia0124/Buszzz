@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.amap.api.location.AMapLocation;
 import com.yuan.locationremind.entity.LocationEntity;
-import com.yuan.locationremind.sqlite.LocationDao;
+import com.yuan.locationremind.db.LocationDao;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -64,11 +64,15 @@ public class LocationListActivity extends CheckPermissionsActivity {
         mAdapter = new LocationAdapter(this);
         mRecyclerView.setAdapter(mAdapter);
 
-        handleState(savedInstanceState);
+        handleState();
 
     }
 
-    private void handleState(@Nullable Bundle savedInstanceState) {
+    /**
+     * 防止service 被系统杀死，状态没改过来
+     *
+     */
+    private void handleState() {
         if (!isServiceWork(this, "com.yuan.locationremind.LocationService")) {
             for (LocationEntity entity : mLocationDao.queryAll()) {
                 if (entity.getSelected() == 1) {
@@ -95,6 +99,7 @@ public class LocationListActivity extends CheckPermissionsActivity {
     protected void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
+        // 如果activity关闭，再次打开，如果service还开着，去service通过eventBus发送最后一次的位置信息
         if (getCurrentRemind() != null) {
             EventBus.getDefault().post(this);
         }
@@ -106,12 +111,17 @@ public class LocationListActivity extends CheckPermissionsActivity {
         refreshView(null);
     }
 
+    /**
+     * 刷新界面，如果service不为空，则证明是service通知强制刷新一次
+     *
+     * @param service LocationService
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void refreshView(LocationService service) {
         List<LocationEntity> list = mLocationDao.queryAll();
         mAdapter.refresh(list);
         if (getCurrentRemind() == null) {
-            mResultTv.setText("没有定位");
+            mResultTv.setText(R.string.no_location);
         }
     }
 
@@ -141,7 +151,7 @@ public class LocationListActivity extends CheckPermissionsActivity {
     }
 
     /**
-     * 如果有可能被回收，则将状态重置
+     * 如果有可能被回收，则存储状态
      *
      * @param outState bundle
      */
@@ -151,9 +161,14 @@ public class LocationListActivity extends CheckPermissionsActivity {
         super.onSaveInstanceState(outState);
     }
 
+    /**
+     * Activity 被意外杀死后恢复处理
+     *
+     * @param savedInstanceState Bundle
+     */
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        handleState(savedInstanceState);
+        handleState();
         refreshView(null);
         super.onRestoreInstanceState(savedInstanceState);
     }

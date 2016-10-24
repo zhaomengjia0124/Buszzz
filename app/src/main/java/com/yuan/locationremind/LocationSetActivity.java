@@ -11,7 +11,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.yuan.locationremind.entity.LocationEntity;
-import com.yuan.locationremind.sqlite.LocationDao;
+import com.yuan.locationremind.db.LocationDao;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

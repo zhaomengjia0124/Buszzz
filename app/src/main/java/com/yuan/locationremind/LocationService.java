@@ -15,16 +15,14 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.os.Vibrator;
 import android.view.ContextThemeWrapper;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ImageView;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.yuan.locationremind.entity.LocationEntity;
-import com.yuan.locationremind.sqlite.LocationDao;
+import com.yuan.locationremind.db.LocationDao;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -33,7 +31,6 @@ import org.greenrobot.eventbus.ThreadMode;
 public class LocationService extends Service implements AMapLocationListener {
 
 
-    ImageView mRemindAnimationIv;
     private Vibrator mVibrator;
     private AMapLocationClient mLocationClient;
     private LocationEntity mLocationEntity;
@@ -65,9 +62,6 @@ public class LocationService extends Service implements AMapLocationListener {
             if (status == 1) {
                 showTip();
                 startVibrate();
-            } else if (status == 2) {
-                dismissTip();
-                stopVibrate();
             }
         }
     };
@@ -89,7 +83,7 @@ public class LocationService extends Service implements AMapLocationListener {
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         if (intent == null) {
-            return super.onStartCommand(intent, flags, startId);
+            return START_STICKY;
         }
 
         mLocationEntity = (LocationEntity) intent.getSerializableExtra("entity");
@@ -156,17 +150,13 @@ public class LocationService extends Service implements AMapLocationListener {
         registerReceiver(mLocationReceiver, filter);
     }
 
+    /**
+     * 开启震动
+     */
     private void startVibrate() {
         long[] pattern = {100, 200, 100, 200, 100, 300, 100, 400, 100, 500, 100, 600};
         mVibrator.vibrate(pattern, pattern.length / 2);
     }
-
-    private void stopVibrate() {
-        if (mVibrator != null) {
-            mVibrator.cancel();
-        }
-    }
-
 
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
@@ -185,13 +175,6 @@ public class LocationService extends Service implements AMapLocationListener {
     }
 
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        release();
-        EventBus.getDefault().unregister(this);
-
-    }
 
     private void release() {
 
@@ -227,13 +210,9 @@ public class LocationService extends Service implements AMapLocationListener {
         }
 
 
-}
+    }
 
     private void showTip() {
-
-        mRemindAnimationIv = new ImageView(this);
-        mRemindAnimationIv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        mRemindAnimationIv.setImageResource(R.drawable.remind);
 
         Context applicationContext = getApplicationContext();
         AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(applicationContext, android.R.style.Theme_DeviceDefault_Light_Dialog));
@@ -251,7 +230,9 @@ public class LocationService extends Service implements AMapLocationListener {
         builder.setMessage("到达“" + add + "”附近，请准备下车！");
         mRemindDialog = builder.create();
         mRemindDialog.setCanceledOnTouchOutside(false);
-        mRemindDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        if(mRemindDialog.getWindow() != null) {
+            mRemindDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        }
         mRemindDialog.show();
 
 
@@ -262,6 +243,14 @@ public class LocationService extends Service implements AMapLocationListener {
             EventBus.getDefault().post(this);
             mRemindDialog.dismiss();
         }
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        release();
+        EventBus.getDefault().unregister(this);
 
     }
 

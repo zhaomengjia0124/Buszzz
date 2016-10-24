@@ -1,4 +1,4 @@
-package com.yuan.locationremind;
+package com.yuan.locationremind.utils;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -9,6 +9,8 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.EditText;
+
+import com.yuan.locationremind.R;
 
 public class ClearEditText extends EditText {
 

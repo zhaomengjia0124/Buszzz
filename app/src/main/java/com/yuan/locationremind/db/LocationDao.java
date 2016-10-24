@@ -1,4 +1,4 @@
-package com.yuan.locationremind.sqlite;
+package com.yuan.locationremind.db;
 
 import android.content.ContentValues;
 import android.content.Context;

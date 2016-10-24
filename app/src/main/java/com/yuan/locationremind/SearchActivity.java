@@ -6,11 +6,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 
 import com.amap.api.services.help.Inputtips;
 import com.amap.api.services.help.InputtipsQuery;
 import com.amap.api.services.help.Tip;
 import com.yuan.locationremind.entity.LocationEntity;
+import com.yuan.locationremind.utils.ClearEditText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +28,6 @@ public class SearchActivity extends AppCompatActivity implements Inputtips.Input
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
-
 
     @BindView(R.id.searchEt)
     ClearEditText mEditText;
@@ -50,6 +51,12 @@ public class SearchActivity extends AppCompatActivity implements Inputtips.Input
     @OnTextChanged(R.id.searchEt)
     public void update() {
         mEditText.updateIconClear();
+
+        String query = mEditText.getText().toString();
+        if (TextUtils.isEmpty(query)) {
+            mAdapter.refresh(new ArrayList<LocationEntity>());
+            return;
+        }
 
         InputtipsQuery inputQuery = new InputtipsQuery(mEditText.getText().toString(), "");
         inputQuery.setCityLimit(true);

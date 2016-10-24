@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.yuan.locationremind.entity.LocationEntity;
-import com.yuan.locationremind.sqlite.LocationDao;
+import com.yuan.locationremind.db.LocationDao;
 
 import java.util.ArrayList;
 import java.util.Collections;

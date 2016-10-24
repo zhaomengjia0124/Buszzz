@@ -26,7 +26,7 @@
         android:paddingRight="14dp"
         android:paddingTop="16dp">
 
-        <com.yuan.locationremind.ClearEditText
+        <com.yuan.locationremind.utils.ClearEditText
             android:id="@+id/searchEt"
             android:layout_width="match_parent"
             android:layout_height="48dp"
@@ -38,7 +38,7 @@
             android:paddingRight="8dp"
             android:singleLine="true"
             android:textSize="16sp"
-            app:iconClear="@mipmap/ic_del"
+            app:iconClear="@mipmap/ic_clear"
             />
 
         <android.support.v7.widget.RecyclerView
