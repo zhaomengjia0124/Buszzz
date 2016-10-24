@@ -246,7 +246,11 @@ public class LocationService extends Service implements AMapLocationListener {
             }
         });
         builder.setTitle("提示");
-        builder.setMessage("到达“" + mLatestLocation.getAddress() + "”附近，请准备下车！");
+        String add = "";
+        if (mLocationEntity != null) {
+            add = mLocationEntity.getAddress();
+        }
+        builder.setMessage("到达“" + add + "”附近，请准备下车！");
         mRemindDialog = builder.create();
         mRemindDialog.setCanceledOnTouchOutside(false);
         mRemindDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
