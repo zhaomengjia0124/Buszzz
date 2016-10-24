@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.os.Vibrator;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -189,12 +188,8 @@ public class LocationService extends Service implements AMapLocationListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        EventBus.getDefault().unregister(this);
-
         release();
-
-        if (BuildConfig.DEBUG) Log.d("LocationService", "onDestroy");
+        EventBus.getDefault().unregister(this);
 
     }
 
@@ -203,10 +198,12 @@ public class LocationService extends Service implements AMapLocationListener {
         try {
             if (mAlarmReceiver != null) {
                 unregisterReceiver(mAlarmReceiver);
+                mAlarmReceiver = null;
             }
 
             if (mLocationReceiver != null) {
                 unregisterReceiver(mLocationReceiver);
+                mLocationReceiver = null;
             }
 
             if (mVibrator != null) {
@@ -224,6 +221,7 @@ public class LocationService extends Service implements AMapLocationListener {
             }
 
             dismissTip();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -260,10 +258,10 @@ public class LocationService extends Service implements AMapLocationListener {
     }
 
     public void dismissTip() {
-        if (mRemindDialog != null) {
+        if (mRemindDialog != null && mRemindDialog.isShowing()) {
+            EventBus.getDefault().post(this);
             mRemindDialog.dismiss();
         }
-        EventBus.getDefault().post(this);
 
     }
 

@@ -53,9 +53,9 @@ public class LocationAdapter extends RecyclerView.Adapter<CViewHolder> {
         holder.intervalTv.setText(String.valueOf(entity.getInterval()));
         holder.radiosTv.setText(String.valueOf(entity.getRadius()));
 
-        if(entity.getSelected() == 0){
+        if (entity.getSelected() == 0) {
             holder.switchBt.setChecked(false);
-        }else{
+        } else {
             holder.switchBt.setChecked(true);
         }
 
@@ -110,9 +110,9 @@ public class LocationAdapter extends RecyclerView.Adapter<CViewHolder> {
 
     private void openRemind(LocationEntity sEntity) {
 
-        for (int i = 0; i< mDataList.size(); i++) {
+        for (int i = 0; i < mDataList.size(); i++) {
             LocationEntity entity = mDataList.get(i);
-            if(entity.getSelected() == 1) {
+            if (entity.getSelected() == 1) {
                 entity.setSelected(0);
                 mLocationDao.update(entity);
             }
