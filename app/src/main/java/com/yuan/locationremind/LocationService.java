@@ -1,23 +1,21 @@
 package com.yuan.locationremind;
 
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.PixelFormat;
-import android.graphics.drawable.AnimationDrawable;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.os.Vibrator;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
+import android.view.ContextThemeWrapper;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -36,13 +34,14 @@ import org.greenrobot.eventbus.ThreadMode;
 public class LocationService extends Service implements AMapLocationListener {
 
 
-    ImageView mRemindAnmationIv;
+    ImageView mRemindAnimationIv;
     private Vibrator mVibrator;
     private AMapLocationClient mLocationClient;
     private LocationEntity mLocationEntity;
     private PendingIntent mPendingIntent;
     private AMapLocation mLatestLocation;
-    private WindowManager mWindowMnanager;
+    private AlertDialog mRemindDialog;
+
     /**
      * 闹钟广播
      */
@@ -230,45 +229,38 @@ public class LocationService extends Service implements AMapLocationListener {
         }
 
 
-    }
+}
 
     private void showTip() {
 
-        mWindowMnanager = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams();
-        params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;// 系统提示window
-        params.format = PixelFormat.TRANSLUCENT;// 支持透明
-        //params.format = PixelFormat.RGBA_8888;
-//        params.flags |= WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;// 焦点
-        params.width = 600;//窗口的宽和高
-        params.height = 400;
-        params.gravity = Gravity.CENTER;
-        params.x = 0;//窗口位置的偏移量
-        params.y = 0;
+        mRemindAnimationIv = new ImageView(this);
+        mRemindAnimationIv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        mRemindAnimationIv.setImageResource(R.drawable.remind);
 
-        mRemindAnmationIv = (ImageView) LayoutInflater.from(this).inflate(R.layout.remind, null);
-        mRemindAnmationIv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        mRemindAnmationIv.setOnClickListener(new View.OnClickListener() {
+        Context applicationContext = getApplicationContext();
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(applicationContext, android.R.style.Theme_DeviceDefault_Light_Dialog));
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(DialogInterface dialog, int which) {
                 release();
             }
         });
-        AnimationDrawable animationDrawable = (AnimationDrawable) mRemindAnmationIv.getBackground();
-        animationDrawable.start();
-        if (mRemindAnmationIv.getParent() == null) {
-            mWindowMnanager.addView(mRemindAnmationIv, params);
-        }
+        builder.setTitle("提示");
+        builder.setMessage("到达“" + mLatestLocation.getAddress() + "”附近，请准备下车！");
+        mRemindDialog = builder.create();
+        mRemindDialog.setCanceledOnTouchOutside(false);
+        mRemindDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        mRemindDialog.show();
+
 
     }
 
     public void dismissTip() {
-        if (mWindowMnanager != null && mRemindAnmationIv != null && mRemindAnmationIv.getParent() != null) {
-            AnimationDrawable animationDrawable = (AnimationDrawable) mRemindAnmationIv.getBackground();
-            animationDrawable.stop();
-            mWindowMnanager.removeView(mRemindAnmationIv);
-            EventBus.getDefault().post(this);
+        if (mRemindDialog != null) {
+            mRemindDialog.dismiss();
         }
+        EventBus.getDefault().post(this);
+
     }
 
 }

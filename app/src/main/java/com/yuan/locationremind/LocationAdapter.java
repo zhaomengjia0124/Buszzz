@@ -95,7 +95,7 @@ public class LocationAdapter extends RecyclerView.Adapter<CViewHolder> {
     }
 
 
-    public void closeRemind(LocationEntity entity) {
+    private void closeRemind(LocationEntity entity) {
         entity.setSelected(0);
         mLocationDao.update(entity);
 
