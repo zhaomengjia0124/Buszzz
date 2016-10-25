@@ -8,7 +8,7 @@ package com.yuan.locationremind.utils;
 
 public class Constants {
 
-    public static int REFRESH_INTERVAL = 2;
+    public static int REFRESH_INTERVAL = 10;
 
-    public static int RADIUS = 100;
+    public static int RADIUS = 1000;
 }

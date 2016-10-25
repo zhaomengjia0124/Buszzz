@@ -73,8 +73,13 @@ public class SearchActivity extends AppCompatActivity implements Inputtips.Input
         List<LocationEntity> addressList = new ArrayList<>();
         for (Tip tip : list) {
             LocationEntity entity = new LocationEntity();
-            entity.setLatitude(tip.getPoint().getLatitude());
-            entity.setLongitude(tip.getPoint().getLongitude());
+            try {
+                entity.setLatitude(tip.getPoint().getLatitude());
+                entity.setLongitude(tip.getPoint().getLongitude());
+            }catch (Exception e){
+                e.printStackTrace();
+                continue;
+            }
             entity.setAddress(tip.getName());
             addressList.add(entity);
         }
