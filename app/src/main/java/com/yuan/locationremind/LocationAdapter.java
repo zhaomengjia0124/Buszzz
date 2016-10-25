@@ -113,6 +113,9 @@ class LocationAdapter extends RecyclerView.Adapter<CViewHolder> {
 
     private void openRemind(LocationEntity sEntity) {
 
+        LocationListActivity activity = (LocationListActivity) mContext;
+        activity.mResultTv.setText(R.string.location_start);
+
         for (int i = 0; i < mDataList.size(); i++) {
             LocationEntity entity = mDataList.get(i);
             if (entity.getSelected() == 1) {

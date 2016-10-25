@@ -12,13 +12,14 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.yuan.locationremind.entity.LocationEntity;
 import com.yuan.locationremind.db.LocationDao;
+import com.yuan.locationremind.entity.LocationEntity;
 import com.yuan.locationremind.utils.Constants;
 
 import butterknife.BindView;
@@ -110,25 +111,38 @@ public class LocationAddActivity extends AppCompatActivity {
         editText.setText(address);
         editText.setSelection(0, address.length());
         editText.requestFocus();
-        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("确定", null);
+        builder.setNegativeButton("取消", null);
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            public void onShow(DialogInterface dialog) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+            }
+        });
+        alertDialog.show();
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View v) {
+
+                String name = editText.getText().toString().trim();
+                if (TextUtils.isEmpty(name)) {
+                    Toast.makeText(LocationAddActivity.this, "标签不能为空！", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                alertDialog.dismiss();
                 updateDao(la, lo, editText.getText().toString());
                 setResult(RESULT_OK);
                 finish();
             }
         });
 
-        builder.setNegativeButton("取消", null);
-        AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            public void onShow(DialogInterface dialog) {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
-            }
-        });
-        dialog.show();
+
+
     }
+
+
 
     private void updateDao(double la, double lo, String name) {
         if (entity == null) {
